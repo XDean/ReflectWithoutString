@@ -22,13 +22,13 @@ public class UnsafeFieldGetter<T> implements FieldGetter<T>, Logable {
 
   private static final Unsafe UNSAFE = UnsafeUtil.getUnsafe();
 
-  private T t;
+  private T mockT;
   private Map<Object, Field> primitiveMap = new HashMap<>();
   private Map<Object, Field> objectMap = new IdentityHashMap<>();
 
   @SuppressWarnings("unchecked")
   public UnsafeFieldGetter(Class<T> clz) throws InstantiationException {
-    t = (T) UNSAFE.allocateInstance(clz);
+    mockT = (T) UNSAFE.allocateInstance(clz);
     Field[] fields = ReflectUtil.getAllFields(clz, false);
     for (Field field : fields) {
       Class<?> type = field.getType();
@@ -53,7 +53,7 @@ public class UnsafeFieldGetter<T> implements FieldGetter<T>, Logable {
       o = newObject(type);
     }
     long offset = UNSAFE.objectFieldOffset(field);
-    UNSAFE.putObject(t, offset, o);
+    UNSAFE.putObject(mockT, offset, o);
     objectMap.put(o, field);
   }
 
@@ -72,6 +72,7 @@ public class UnsafeFieldGetter<T> implements FieldGetter<T>, Logable {
     } else {
       enhancer.setSuperclass(clz);
     }
+    enhancer.setUseCache(false);
     enhancer.setCallbackType(NoOp.class);
     return enhancer.createClass();
   }
@@ -80,7 +81,7 @@ public class UnsafeFieldGetter<T> implements FieldGetter<T>, Logable {
     Array.newInstance(field.getType(), 0);
     long offset = UNSAFE.objectFieldOffset(field);
     Object array = Array.newInstance(Object.class, 0);
-    UNSAFE.putObject(t, offset, array);
+    UNSAFE.putObject(mockT, offset, array);
     objectMap.put(array, field);
   }
 
@@ -121,7 +122,7 @@ public class UnsafeFieldGetter<T> implements FieldGetter<T>, Logable {
     checkRange(field, 1, booleanCount);
     long offset = UNSAFE.objectFieldOffset(field);
     boolean bool = booleanCount == 0;
-    UNSAFE.putBoolean(t, offset, bool);
+    UNSAFE.putBoolean(mockT, offset, bool);
     primitiveMap.put(bool, field);
     booleanCount++;
   }
@@ -132,7 +133,7 @@ public class UnsafeFieldGetter<T> implements FieldGetter<T>, Logable {
     checkRange(field, Byte.SIZE, byteCount);
     long offset = UNSAFE.objectFieldOffset(field);
     byte b = (byte) byteCount;
-    UNSAFE.putByte(t, offset, b);
+    UNSAFE.putByte(mockT, offset, b);
     primitiveMap.put(b, field);
     byteCount++;
   }
@@ -143,7 +144,7 @@ public class UnsafeFieldGetter<T> implements FieldGetter<T>, Logable {
     checkRange(field, Character.SIZE, charCount);
     long offset = UNSAFE.objectFieldOffset(field);
     char i = (char) charCount;
-    UNSAFE.putInt(t, offset, i);
+    UNSAFE.putInt(mockT, offset, i);
     primitiveMap.put(i, field);
     charCount++;
   }
@@ -154,7 +155,7 @@ public class UnsafeFieldGetter<T> implements FieldGetter<T>, Logable {
     checkRange(field, Integer.SIZE, intCount);
     long offset = UNSAFE.objectFieldOffset(field);
     int i = (int) intCount;
-    UNSAFE.putInt(t, offset, i);
+    UNSAFE.putInt(mockT, offset, i);
     primitiveMap.put(i, field);
     intCount++;
   }
@@ -165,7 +166,7 @@ public class UnsafeFieldGetter<T> implements FieldGetter<T>, Logable {
     checkRange(field, Short.SIZE, shortCount);
     long offset = UNSAFE.objectFieldOffset(field);
     short i = (short) shortCount;
-    UNSAFE.putShort(t, offset, i);
+    UNSAFE.putShort(mockT, offset, i);
     primitiveMap.put(i, field);
     shortCount++;
   }
@@ -176,7 +177,7 @@ public class UnsafeFieldGetter<T> implements FieldGetter<T>, Logable {
     checkRange(field, Long.SIZE, longCount);
     long offset = UNSAFE.objectFieldOffset(field);
     long l = longCount;
-    UNSAFE.putLong(t, offset, l);
+    UNSAFE.putLong(mockT, offset, l);
     primitiveMap.put(l, field);
     longCount++;
   }
@@ -187,7 +188,7 @@ public class UnsafeFieldGetter<T> implements FieldGetter<T>, Logable {
     checkRange(field, Float.SIZE, floatCount);
     long offset = UNSAFE.objectFieldOffset(field);
     float f = Float.intBitsToFloat((int) floatCount);
-    UNSAFE.putFloat(t, offset, f);
+    UNSAFE.putFloat(mockT, offset, f);
     primitiveMap.put(f, field);
     floatCount++;
   }
@@ -198,7 +199,7 @@ public class UnsafeFieldGetter<T> implements FieldGetter<T>, Logable {
     checkRange(field, Double.SIZE, doubleCount);
     long offset = UNSAFE.objectFieldOffset(field);
     double d = Double.longBitsToDouble(doubleCount);
-    UNSAFE.putDouble(t, offset, d);
+    UNSAFE.putDouble(mockT, offset, d);
     primitiveMap.put(d, field);
     doubleCount++;
   }
@@ -226,8 +227,8 @@ public class UnsafeFieldGetter<T> implements FieldGetter<T>, Logable {
         type.getName(), field.getName(), 1L << bits, type.getName()));
   }
 
-  public T getMock() {
-    return t;
+  public T getMockObject() {
+    return mockT;
   }
 
   public Field get(Object o) {
@@ -236,7 +237,7 @@ public class UnsafeFieldGetter<T> implements FieldGetter<T>, Logable {
 
   @Override
   public Field get(Function<T, ?> invoke) {
-    return get(invoke.apply(getMock()));
+    return get(invoke.apply(getMockObject()));
   }
 
 }
