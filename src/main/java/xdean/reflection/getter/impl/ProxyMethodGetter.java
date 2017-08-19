@@ -1,12 +1,14 @@
-package xdean.reflection.property;
+package xdean.reflection.getter.impl;
 
 import java.lang.reflect.Method;
+import java.util.function.Function;
 
 import net.sf.cglib.proxy.Enhancer;
 import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
 import xdean.reflection.Invocation;
 import xdean.reflection.InvocationContext;
+import xdean.reflection.getter.MethodGetter;
 
 /**
  * 350ms for 1M times construct<br>
@@ -16,25 +18,23 @@ import xdean.reflection.InvocationContext;
  *
  * @param <T>
  */
-public class ProxyPropertyNameGetter<T> implements PropertyNameGetter<T>, MethodInterceptor {
+public class ProxyMethodGetter<T> implements MethodGetter<T>, MethodInterceptor {
   T t;
 
   @SuppressWarnings("unchecked")
-  public ProxyPropertyNameGetter(Class<T> clz) {
+  public ProxyMethodGetter(Class<T> clz) {
     Enhancer en = new Enhancer();
     en.setSuperclass(clz);
     en.setCallback(this);
     t = (T) en.create(new Class[] { Object.class, Object.class }, new Object[] { null, null });
   }
 
-  @Override
-  public String getName(Object fieldValue) {
+  public Method get(Object fieldValue) {
     return InvocationContext.getLastInvocation()
-        .map(i -> i.getMethod().getName())
+        .map(Invocation::getMethod)
         .orElseThrow(() -> new IllegalArgumentException());
   }
 
-  @Override
   public T get() {
     return t;
   }
@@ -43,5 +43,10 @@ public class ProxyPropertyNameGetter<T> implements PropertyNameGetter<T>, Method
   public Object intercept(Object obj, Method method, Object[] args, MethodProxy proxy) throws Throwable {
     InvocationContext.putInvocation(new Invocation(obj, method, args));
     return null;
+  }
+
+  @Override
+  public Method get(Function<T, ?> invoke) {
+    return get(invoke.apply(get()));
   }
 }
