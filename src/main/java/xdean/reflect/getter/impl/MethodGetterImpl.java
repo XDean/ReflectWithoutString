@@ -2,6 +2,7 @@ package xdean.reflect.getter.impl;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.Optional;
 import java.util.function.Function;
 
@@ -15,6 +16,8 @@ import xdean.jex.util.reflect.ReflectUtil;
 import xdean.reflect.getter.MethodGetter;
 
 /**
+ * Based on cglib.<br>
+ * Expensive to construct.(Because need generate byte code.)
  *
  * @author XDean
  *
@@ -41,11 +44,19 @@ public class MethodGetterImpl<T> implements MethodGetter<T>, MethodInterceptor {
     LAST_METHOD.set(invocation);
   }
 
+  public static void main(String[] args) {
+    MethodGetterImpl<Object> mg = new MethodGetterImpl<>(Object.class);
+    System.out.println(mg.get(o -> o.getClass()));
+  }
+
   T mockT;
 
   @SuppressWarnings("unchecked")
   public MethodGetterImpl(Class<T> clz) throws IllegalStateException {
     try {
+      if (Modifier.isFinal(clz.getModifiers())) {
+        throw new IllegalArgumentException("Can't mock final class.");
+      }
       Enhancer e = new Enhancer();
       e.setSuperclass(clz);
       e.setUseCache(false);
@@ -64,14 +75,6 @@ public class MethodGetterImpl<T> implements MethodGetter<T>, MethodInterceptor {
     }
   }
 
-  public Method get(Object fieldValue) {
-    return getMethod().orElseThrow(() -> new IllegalArgumentException("No method invoked."));
-  }
-
-  public T getMockObject() {
-    return mockT;
-  }
-
   @Override
   public Object intercept(Object obj, Method method, Object[] args, MethodProxy proxy) throws Throwable {
     putMethod(method);
@@ -82,4 +85,13 @@ public class MethodGetterImpl<T> implements MethodGetter<T>, MethodInterceptor {
   public Method get(Function<T, ?> invoke) {
     return get(invoke.apply(getMockObject()));
   }
+
+  public T getMockObject() {
+    return mockT;
+  }
+
+  public Method get(Object invoke) {
+    return getMethod().orElseThrow(() -> new IllegalArgumentException("No method invoked."));
+  }
+
 }

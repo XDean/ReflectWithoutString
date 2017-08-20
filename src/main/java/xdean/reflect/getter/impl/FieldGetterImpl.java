@@ -20,6 +20,16 @@ import xdean.jex.util.log.Logable;
 import xdean.jex.util.reflect.ReflectUtil;
 import xdean.reflect.getter.FieldGetter;
 
+/**
+ * Based on {@link Unsafe}.<br>
+ * Supports all java class, but limit by primitive type field amount. For each primitive type with n bytes size, there
+ * at most have 2^n this type fields. For example, construct {@code FieldGetterImpl} with a class with 3 boolean fields
+ * will lead a {@code IllegalArgumentException}.
+ *
+ * @author XDean
+ *
+ * @param <T>
+ */
 public class FieldGetterImpl<T> implements FieldGetter<T>, Logable {
 
   private static final Unsafe UNSAFE = UnsafeUtil.getUnsafe();
@@ -28,8 +38,14 @@ public class FieldGetterImpl<T> implements FieldGetter<T>, Logable {
   private Map<Object, Field> primitiveMap = new HashMap<>();
   private Map<Object, Field> objectMap = new IdentityHashMap<>();
 
+  /**
+   *
+   * @param clz
+   * @throws IllegalStateException If construct the mock object failed.
+   * @throws IllegalArgumentException If the class is not suitable. See the class doc.
+   */
   @SuppressWarnings("unchecked")
-  public FieldGetterImpl(Class<T> clz) throws IllegalStateException {
+  public FieldGetterImpl(Class<T> clz) throws IllegalStateException, IllegalArgumentException {
     try {
       mockT = (T) UNSAFE.allocateInstance(clz);
       Field[] fields = ReflectUtil.getAllFields(clz, false);
@@ -220,21 +236,42 @@ public class FieldGetterImpl<T> implements FieldGetter<T>, Logable {
 
   private void checkRange(Field field, int bits, long currentCount) {
     if ((bits < Long.SIZE && currentCount == 1L << bits) || currentCount == -1L) {
-      IllegalStateException e = getException(field, bits);
+      RuntimeException e = getException(field, bits);
       log().error(e.getMessage(), e);
       throw e;
     }
   }
 
-  private IllegalStateException getException(Field field, int bits) {
+  private RuntimeException getException(Field field, int bits) {
     Class<?> type = field.getType();
-    return new IllegalStateException(String.format(
+    return new IllegalArgumentException(String.format(
         "Can't generate %s preoperty (%s)'s name getter, only support %s %ss.",
         type.getName(), field.getName(), 1L << bits, type.getName()));
   }
 
+  /**
+   * Get the mocked object. You can perform invocation on it directly. <br>
+   * For example:
+   *
+   * <pre>
+   * <code>
+   * FieldGetterImpl fgi = new FieldGetterImpl(SomeClass.class);
+   * fgi.getName(o -> o.prop);
+   * // is same as
+   * SomeClass sc = fgi.getMockObject();
+   * fgi.getName(sc.prop);
+   * </code>
+   * </pre>
+   *
+   * @return
+   */
   public T getMockObject() {
     return mockT;
+  }
+
+  @Override
+  public boolean supportFieldInvoke() {
+    return true;
   }
 
   @Override
@@ -247,6 +284,7 @@ public class FieldGetterImpl<T> implements FieldGetter<T>, Logable {
    *
    * @param o a property value of the mock object
    * @return
+   * @see #getMockObject()
    */
   public Field get(Object o) {
     return firstSuccess(
@@ -255,10 +293,24 @@ public class FieldGetterImpl<T> implements FieldGetter<T>, Logable {
         () -> throwIt(new IllegalStateException("The given value isn't the mock object's property.")));
   }
 
+  /**
+   * Get field name by a property value
+   *
+   * @param o a property value of the mock object
+   * @return
+   * @see #getMockObject()
+   */
   public String getName(Object o) {
     return get(o).getName();
   }
 
+  /**
+   * Get field type by a property value
+   *
+   * @param o a property value of the mock object
+   * @return
+   * @see #getMockObject()
+   */
   @SuppressWarnings("unchecked")
   public <C> Class<? super C> getType(C o) {
     return (Class<? super C>) get(o).getType();

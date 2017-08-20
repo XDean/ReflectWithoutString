@@ -7,6 +7,7 @@ import java.util.AbstractList;
 
 import lombok.Getter;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import xdean.reflect.getter.PropertyGetter;
@@ -25,11 +26,13 @@ public class TestPropertyGetter {
     testPropertyNameGetter(unsafePg);
   }
 
+  @Ignore("Enable it to test efficiency")
   @Test
   public void testUnsafeConstructTime() {
     testConstructTime(unsafePg, 1_000);
   }
 
+  @Ignore("Enable it to test efficiency")
   @Test(timeout = 1000)
   public void testUnsafeInvokeTime() {
     testInvokeTime(unsafePg, 1_000_000);
@@ -45,11 +48,13 @@ public class TestPropertyGetter {
     testPropertyNameGetter(proxyPg);
   }
 
+  @Ignore("Enable it to test efficiency")
   @Test
   public void testProxyConstructTime() {
     testConstructTime(proxyPg, 1_000);
   }
 
+  @Ignore("Enable it to test efficiency")
   @Test(timeout = 1000)
   public void testProxyInvokeTime() {
     testInvokeTime(proxyPg, 1_000_000);

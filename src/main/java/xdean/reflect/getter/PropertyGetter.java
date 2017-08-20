@@ -29,6 +29,12 @@ import java.util.function.Function;
  */
 public interface PropertyGetter<T> {
 
+  /**
+   * Get name of property related in the invocation.
+   *
+   * @param invoke
+   * @return
+   */
   String getName(Function<T, ?> invoke);
 
   <C> Class<? super C> getType(Function<T, C> invoke);
@@ -51,5 +57,21 @@ public interface PropertyGetter<T> {
    */
   default <C> Class<? super C> typeOf(Function<T, C> invoke) {
     return getType(invoke);
+  }
+
+  /**
+   * Whether the direct field invoke is supported. If return true, you can use:
+   *
+   * <pre>
+   * <code>
+   *  PropertyGetter pg = ...;
+   *  pg.getName(b -> b.beanProp);
+   * </code>
+   * </pre>
+   *
+   * @return
+   */
+  default boolean supportFieldInvoke() {
+    return false;
   }
 }
