@@ -1,7 +1,7 @@
-package reflection;
+package xdean.reflect.getter;
 
 import static org.junit.Assert.assertEquals;
-import static xdean.jex.util.task.TaskUtil.uncheck;
+import static xdean.jex.util.lang.ExceptionUtil.uncheck;
 
 import java.util.AbstractList;
 
@@ -9,9 +9,9 @@ import lombok.Getter;
 
 import org.junit.Test;
 
-import xdean.reflection.getter.PropertyGetter;
-import xdean.reflection.getter.impl.MethodGetterImpl;
-import xdean.reflection.getter.impl.FieldGetterImpl;
+import xdean.reflect.getter.PropertyGetter;
+import xdean.reflect.getter.impl.FieldGetterImpl;
+import xdean.reflect.getter.impl.MethodGetterImpl;
 
 public class TestPropertyGetter {
   @SuppressWarnings("unchecked")

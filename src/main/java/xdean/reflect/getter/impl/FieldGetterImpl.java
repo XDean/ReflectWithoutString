@@ -1,12 +1,14 @@
 package xdean.reflect.getter.impl;
 
+import static xdean.jex.util.lang.ExceptionUtil.throwIt;
+import static xdean.jex.util.task.TaskUtil.firstSuccess;
+
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.Map;
-import java.util.Optional;
 import java.util.function.Function;
 
 import net.sf.cglib.proxy.Enhancer;
@@ -27,18 +29,22 @@ public class FieldGetterImpl<T> implements FieldGetter<T>, Logable {
   private Map<Object, Field> objectMap = new IdentityHashMap<>();
 
   @SuppressWarnings("unchecked")
-  public FieldGetterImpl(Class<T> clz) throws InstantiationException {
-    mockT = (T) UNSAFE.allocateInstance(clz);
-    Field[] fields = ReflectUtil.getAllFields(clz, false);
-    for (Field field : fields) {
-      Class<?> type = field.getType();
-      if (PrimitiveTypeUtil.isPrimitive(type)) {
-        handlePrimitive(field);
-      } else if (type.isArray()) {
-        handleArray(field);
-      } else {
-        handleObject(field);
+  public FieldGetterImpl(Class<T> clz) throws IllegalStateException {
+    try {
+      mockT = (T) UNSAFE.allocateInstance(clz);
+      Field[] fields = ReflectUtil.getAllFields(clz, false);
+      for (Field field : fields) {
+        Class<?> type = field.getType();
+        if (PrimitiveTypeUtil.isPrimitive(type)) {
+          handlePrimitive(field);
+        } else if (type.isArray()) {
+          handleArray(field);
+        } else {
+          handleObject(field);
+        }
       }
+    } catch (InstantiationException e) {
+      throw new IllegalStateException(e);
     }
   }
 
@@ -231,24 +237,52 @@ public class FieldGetterImpl<T> implements FieldGetter<T>, Logable {
     return mockT;
   }
 
-  public Field get(Object o) {
-    return Optional.ofNullable(objectMap.get(o)).orElseGet(() -> primitiveMap.get(o));
+  @Override
+  public Field get(Function<T, ?> invoke) {
+    return get(invoke.apply(getMockObject()));
   }
 
   /**
-   * More readable version of get
+   * Get field by a property value
+   *
+   * @param o a property value of the mock object
+   * @return
+   */
+  public Field get(Object o) {
+    return firstSuccess(
+        () -> objectMap.get(o),
+        () -> primitiveMap.get(o),
+        () -> throwIt(new IllegalStateException("The given value isn't the mock object's property.")));
+  }
+
+  public String getName(Object o) {
+    return get(o).getName();
+  }
+
+  @SuppressWarnings("unchecked")
+  public <C> Class<? super C> getType(C o) {
+    return (Class<? super C>) get(o).getType();
+  }
+
+  /**
+   * More readable version of {@link #getName(String)}
    *
    * @param o a property value of the mock object
    * @see #getMockObject()
    * @return
    */
   public String nameOf(Object o) {
-    return get(o).getName();
+    return getName(o);
   }
 
-  @Override
-  public Field get(Function<T, ?> invoke) {
-    return get(invoke.apply(getMockObject()));
+  /**
+   * More readable version of {@link #getName(String)}
+   *
+   * @param o a property value of the mock object
+   * @see #getMockObject()
+   * @return
+   */
+  public <C> Class<? super C> typeOf(C o) {
+    return getType(o);
   }
-
 }

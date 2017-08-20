@@ -31,5 +31,25 @@ public interface PropertyGetter<T> {
 
   String getName(Function<T, ?> invoke);
 
-  <C> Class<? extends C> getType(Function<T, C> invoke);
+  <C> Class<? super C> getType(Function<T, C> invoke);
+
+  /**
+   * More readable version of {@link #getName(Function)}.
+   *
+   * @param invoke
+   * @return
+   */
+  default String nameOf(Function<T, ?> invoke) {
+    return getName(invoke);
+  }
+
+  /**
+   * More readable version of {@link #getType(Function)}.
+   *
+   * @param invoke
+   * @return
+   */
+  default <C> Class<? super C> typeOf(Function<T, C> invoke) {
+    return getType(invoke);
+  }
 }

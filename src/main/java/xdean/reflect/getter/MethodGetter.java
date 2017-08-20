@@ -3,6 +3,14 @@ package xdean.reflect.getter;
 import java.lang.reflect.Method;
 import java.util.function.Function;
 
+/**
+ * Get {@link Method} from an invocation. If invoke getter method, you can use the convenient method
+ * {@link #getName(Function)} and {@link #getType(Function)} to get the property's information (from the Method's
+ * signature, even if there is no backing field).
+ *
+ * @author XDean
+ * @param <T>
+ */
 public interface MethodGetter<T> extends InvokeGetter<T, Method>, PropertyGetter<T> {
 
   int UP_LOW_GAP = 'a' - 'A';
@@ -14,8 +22,8 @@ public interface MethodGetter<T> extends InvokeGetter<T, Method>, PropertyGetter
 
   @Override
   @SuppressWarnings("unchecked")
-  default <C> Class<? extends C> getType(Function<T, C> invoke) {
-    return (Class<? extends C>) get(invoke).getReturnType();
+  default <C> Class<? super C> getType(Function<T, C> invoke) {
+    return (Class<? super C>) get(invoke).getReturnType();
   }
 
   static String getterToName(String getterName) {

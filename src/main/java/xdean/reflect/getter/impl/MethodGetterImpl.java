@@ -12,7 +12,6 @@ import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
 import xdean.jex.util.lang.UnsafeUtil;
 import xdean.jex.util.reflect.ReflectUtil;
-import xdean.reflect.getter.Invocation;
 import xdean.reflect.getter.MethodGetter;
 
 /**
@@ -32,20 +31,20 @@ public class MethodGetterImpl<T> implements MethodGetter<T>, MethodInterceptor {
     }
   }
 
-  private static final ThreadLocal<Invocation> LAST_INVOCATION = new ThreadLocal<Invocation>();
+  private static final ThreadLocal<Method> LAST_METHOD = new ThreadLocal<Method>();
 
-  public static Optional<Invocation> getInvocation() {
-    return Optional.ofNullable(LAST_INVOCATION.get());
+  public static Optional<Method> getMethod() {
+    return Optional.ofNullable(LAST_METHOD.get());
   }
 
-  public static void putInvocation(Invocation invocation) {
-    LAST_INVOCATION.set(invocation);
+  public static void putMethod(Method invocation) {
+    LAST_METHOD.set(invocation);
   }
 
   T mockT;
 
   @SuppressWarnings("unchecked")
-  public MethodGetterImpl(Class<T> clz) {
+  public MethodGetterImpl(Class<T> clz) throws IllegalStateException {
     try {
       Enhancer e = new Enhancer();
       e.setSuperclass(clz);
@@ -66,9 +65,7 @@ public class MethodGetterImpl<T> implements MethodGetter<T>, MethodInterceptor {
   }
 
   public Method get(Object fieldValue) {
-    return getInvocation()
-        .map(Invocation::getMethod)
-        .orElseThrow(() -> new IllegalArgumentException());
+    return getMethod().orElseThrow(() -> new IllegalArgumentException("No method invoked."));
   }
 
   public T getMockObject() {
@@ -77,7 +74,7 @@ public class MethodGetterImpl<T> implements MethodGetter<T>, MethodInterceptor {
 
   @Override
   public Object intercept(Object obj, Method method, Object[] args, MethodProxy proxy) throws Throwable {
-    putInvocation(new Invocation(obj, method, args));
+    putMethod(method);
     return null;
   }
 
