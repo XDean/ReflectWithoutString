@@ -2,6 +2,7 @@ package xdean.reflection.getter.impl;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Optional;
 import java.util.function.Function;
 
 import net.sf.cglib.core.Signature;
@@ -12,18 +13,15 @@ import net.sf.cglib.proxy.MethodProxy;
 import xdean.jex.util.lang.UnsafeUtil;
 import xdean.jex.util.reflect.ReflectUtil;
 import xdean.reflection.Invocation;
-import xdean.reflection.InvocationContext;
 import xdean.reflection.getter.MethodGetter;
 
 /**
- * 350ms for 1M times construct<br>
- * 115ms for 1M times getName
  *
  * @author XDean
  *
  * @param <T>
  */
-public class ProxyMethodGetter<T> implements MethodGetter<T>, MethodInterceptor {
+public class MethodGetterImpl<T> implements MethodGetter<T>, MethodInterceptor {
   private static final String BIND_CALLBACK;
   static {
     try {
@@ -33,10 +31,21 @@ public class ProxyMethodGetter<T> implements MethodGetter<T>, MethodInterceptor 
       throw new IllegalStateException("Can't find Enhancer.BIND_CALLBACK field.", e);
     }
   }
+
+  private static final ThreadLocal<Invocation> LAST_INVOCATION = new ThreadLocal<Invocation>();
+
+  public static Optional<Invocation> getInvocation() {
+    return Optional.ofNullable(LAST_INVOCATION.get());
+  }
+
+  public static void putInvocation(Invocation invocation) {
+    LAST_INVOCATION.set(invocation);
+  }
+
   T mockT;
 
   @SuppressWarnings("unchecked")
-  public ProxyMethodGetter(Class<T> clz) {
+  public MethodGetterImpl(Class<T> clz) {
     try {
       Enhancer e = new Enhancer();
       e.setSuperclass(clz);
@@ -49,15 +58,15 @@ public class ProxyMethodGetter<T> implements MethodGetter<T>, MethodInterceptor 
       bindMethod.setAccessible(true);
       bindMethod.invoke(null, object);
       mockT = object;
-    } catch (RuntimeException | NoSuchMethodException | InstantiationException | IllegalAccessException
-        | InvocationTargetException e) {
-      // TODO
-      e.printStackTrace();
+    } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+      throw new Error("Never happen. Check code.", e);
+    } catch (InstantiationException e) {
+      throw new IllegalStateException(e);
     }
   }
 
   public Method get(Object fieldValue) {
-    return InvocationContext.getLastInvocation()
+    return getInvocation()
         .map(Invocation::getMethod)
         .orElseThrow(() -> new IllegalArgumentException());
   }
@@ -68,7 +77,7 @@ public class ProxyMethodGetter<T> implements MethodGetter<T>, MethodInterceptor 
 
   @Override
   public Object intercept(Object obj, Method method, Object[] args, MethodProxy proxy) throws Throwable {
-    InvocationContext.putInvocation(new Invocation(obj, method, args));
+    putInvocation(new Invocation(obj, method, args));
     return null;
   }
 

@@ -6,37 +6,19 @@ import static xdean.jex.util.task.TaskUtil.uncheck;
 import java.util.AbstractList;
 
 import lombok.Getter;
-import net.sf.cglib.core.DebuggingClassWriter;
 
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import xdean.reflection.getter.PropertyGetter;
-import xdean.reflection.getter.impl.ProxyMethodGetter;
-import xdean.reflection.getter.impl.UnsafeFieldGetter;
+import xdean.reflection.getter.impl.MethodGetterImpl;
+import xdean.reflection.getter.impl.FieldGetterImpl;
 
-public class TestFieldGetter {
+public class TestPropertyGetter {
   @SuppressWarnings("unchecked")
-  PngGetter unsafePg = UnsafeFieldGetter::new;
+  PngGetter unsafePg = FieldGetterImpl::new;
 
   @SuppressWarnings("unchecked")
-  PngGetter proxyPg = ProxyMethodGetter::new;
-
-  @BeforeClass
-  public static void setup() {
-    System.setProperty(DebuggingClassWriter.DEBUG_LOCATION_PROPERTY, "D:\\coding\\java\\cglib\\classFile");
-  }
-
-  @Test
-  public void testTimeUse() {
-    // for (int i = 0; i < 1000000; i++) {
-    // TimeUtil.seriesTimeThen(() -> new ProxyPropertyNameGetter<>(Pair.class), EmptyFunction.biconsumer());
-    // }
-    // ProxyPropertyNameGetter<B> png = new ProxyPropertyNameGetter<>(B.class);
-    // for (int i = 0; i < 1000000; i++) {
-    // TimeUtil.seriesTimeThen(() -> png.getName(B::getPrimitive), EmptyFunction.biconsumer());
-    // }
-  }
+  PngGetter proxyPg = MethodGetterImpl::new;
 
   @Test
   public void testUnsafe() {
@@ -44,13 +26,46 @@ public class TestFieldGetter {
   }
 
   @Test
-  public void testProxy() {
-    testPropertyNameGetter(proxyPg);
+  public void testUnsafeConstructTime() {
+    testConstructTime(unsafePg, 1_000);
+  }
+
+  @Test(timeout = 1000)
+  public void testUnsafeInvokeTime() {
+    testInvokeTime(unsafePg, 1_000_000);
   }
 
   @Test(expected = IllegalStateException.class)
   public void testUnsafeBooleanOverflow() {
     unsafePg.get(ThreeBoolean.class);
+  }
+
+  @Test
+  public void testProxy() {
+    testPropertyNameGetter(proxyPg);
+  }
+
+  @Test
+  public void testProxyConstructTime() {
+    testConstructTime(proxyPg, 1_000);
+  }
+
+  @Test(timeout = 1000)
+  public void testProxyInvokeTime() {
+    testInvokeTime(proxyPg, 1_000_000);
+  }
+
+  private void testConstructTime(PngGetter pg, long times) {
+    for (int i = 0; i < times; i++) {
+      pg.get(Object.class);
+    }
+  }
+
+  private void testInvokeTime(PngGetter pg, long times) {
+    PropertyGetter<ForTime> png = pg.get(ForTime.class);
+    for (int i = 0; i < times; i++) {
+      png.getName(ForTime::getO);
+    }
   }
 
   private void testPropertyNameGetter(PngGetter pg) {
@@ -171,6 +186,15 @@ public class TestFieldGetter {
   static class Abs {
     AbstractList<?> absList;
     Cloneable clone;
+  }
+
+  @Getter
+  static class ForTime {
+    int i;
+    Object o;
+    Class<?> clz;
+    AbstractList<?> al;
+    Cloneable c;
   }
 
   static class ThreeBoolean {

@@ -18,7 +18,7 @@ import xdean.jex.util.log.Logable;
 import xdean.jex.util.reflect.ReflectUtil;
 import xdean.reflection.getter.FieldGetter;
 
-public class UnsafeFieldGetter<T> implements FieldGetter<T>, Logable {
+public class FieldGetterImpl<T> implements FieldGetter<T>, Logable {
 
   private static final Unsafe UNSAFE = UnsafeUtil.getUnsafe();
 
@@ -27,7 +27,7 @@ public class UnsafeFieldGetter<T> implements FieldGetter<T>, Logable {
   private Map<Object, Field> objectMap = new IdentityHashMap<>();
 
   @SuppressWarnings("unchecked")
-  public UnsafeFieldGetter(Class<T> clz) throws InstantiationException {
+  public FieldGetterImpl(Class<T> clz) throws InstantiationException {
     mockT = (T) UNSAFE.allocateInstance(clz);
     Field[] fields = ReflectUtil.getAllFields(clz, false);
     for (Field field : fields) {
