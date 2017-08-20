@@ -1,4 +1,4 @@
-package xdean.reflection.getter.impl;
+package xdean.reflect.getter.impl;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
@@ -16,7 +16,7 @@ import xdean.jex.util.lang.PrimitiveTypeUtil;
 import xdean.jex.util.lang.UnsafeUtil;
 import xdean.jex.util.log.Logable;
 import xdean.jex.util.reflect.ReflectUtil;
-import xdean.reflection.getter.FieldGetter;
+import xdean.reflect.getter.FieldGetter;
 
 public class FieldGetterImpl<T> implements FieldGetter<T>, Logable {
 
@@ -116,7 +116,7 @@ public class FieldGetterImpl<T> implements FieldGetter<T>, Logable {
     }
   }
 
-  short booleanCount = 0;
+  private short booleanCount = 0;
 
   private void handleBoolean(Field field) {
     checkRange(field, 1, booleanCount);
@@ -127,7 +127,7 @@ public class FieldGetterImpl<T> implements FieldGetter<T>, Logable {
     booleanCount++;
   }
 
-  short byteCount = 0;
+  private short byteCount = 0;
 
   private void handleByte(Field field) {
     checkRange(field, Byte.SIZE, byteCount);
@@ -138,7 +138,7 @@ public class FieldGetterImpl<T> implements FieldGetter<T>, Logable {
     byteCount++;
   }
 
-  int charCount;
+  private int charCount;
 
   private void handleChar(Field field) {
     checkRange(field, Character.SIZE, charCount);
@@ -149,7 +149,7 @@ public class FieldGetterImpl<T> implements FieldGetter<T>, Logable {
     charCount++;
   }
 
-  long intCount;
+  private long intCount;
 
   private void handleInt(Field field) {
     checkRange(field, Integer.SIZE, intCount);
@@ -160,7 +160,7 @@ public class FieldGetterImpl<T> implements FieldGetter<T>, Logable {
     intCount++;
   }
 
-  int shortCount;
+  private int shortCount;
 
   private void handleShort(Field field) {
     checkRange(field, Short.SIZE, shortCount);
@@ -171,7 +171,7 @@ public class FieldGetterImpl<T> implements FieldGetter<T>, Logable {
     shortCount++;
   }
 
-  long longCount;
+  private long longCount;
 
   private void handleLong(Field field) {
     checkRange(field, Long.SIZE, longCount);
@@ -182,7 +182,7 @@ public class FieldGetterImpl<T> implements FieldGetter<T>, Logable {
     longCount++;
   }
 
-  long floatCount;
+  private long floatCount;
 
   private void handleFloat(Field field) {
     checkRange(field, Float.SIZE, floatCount);
@@ -193,7 +193,7 @@ public class FieldGetterImpl<T> implements FieldGetter<T>, Logable {
     floatCount++;
   }
 
-  long doubleCount;
+  private long doubleCount;
 
   private void handleDouble(Field field) {
     checkRange(field, Double.SIZE, doubleCount);
@@ -233,6 +233,17 @@ public class FieldGetterImpl<T> implements FieldGetter<T>, Logable {
 
   public Field get(Object o) {
     return Optional.ofNullable(objectMap.get(o)).orElseGet(() -> primitiveMap.get(o));
+  }
+
+  /**
+   * More readable version of get
+   *
+   * @param o a property value of the mock object
+   * @see #getMockObject()
+   * @return
+   */
+  public String nameOf(Object o) {
+    return get(o).getName();
   }
 
   @Override

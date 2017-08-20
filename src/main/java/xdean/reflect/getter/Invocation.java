@@ -1,4 +1,4 @@
-package xdean.reflection;
+package xdean.reflect.getter;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

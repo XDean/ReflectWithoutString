@@ -1,4 +1,4 @@
-package xdean.reflection.getter.impl;
+package xdean.reflect.getter.impl;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -12,8 +12,8 @@ import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
 import xdean.jex.util.lang.UnsafeUtil;
 import xdean.jex.util.reflect.ReflectUtil;
-import xdean.reflection.Invocation;
-import xdean.reflection.getter.MethodGetter;
+import xdean.reflect.getter.Invocation;
+import xdean.reflect.getter.MethodGetter;
 
 /**
  *

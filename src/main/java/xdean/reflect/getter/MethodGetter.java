@@ -1,4 +1,4 @@
-package xdean.reflection.getter;
+package xdean.reflect.getter;
 
 import java.lang.reflect.Method;
 import java.util.function.Function;

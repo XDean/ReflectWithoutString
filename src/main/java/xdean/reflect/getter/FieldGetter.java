@@ -1,8 +1,15 @@
-package xdean.reflection.getter;
+package xdean.reflect.getter;
 
 import java.lang.reflect.Field;
 import java.util.function.Function;
 
+/**
+ * Get Field by invocation.
+ *
+ * @author XDean
+ *
+ * @param <T>
+ */
 public interface FieldGetter<T> extends InvokeGetter<T, Field>, PropertyGetter<T> {
   @Override
   default String getName(Function<T, ?> invoke) {
