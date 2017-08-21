@@ -29,7 +29,7 @@ public class TestPropertyGetter {
   @Ignore("Enable it to test efficiency")
   @Test
   public void testFieldConstructTime() {
-    testConstructTime(fieldPg, 1_000);
+    testConstructTime(fieldPg, 1_000_000);
   }
 
   @Ignore("Enable it to test efficiency")
