@@ -21,7 +21,7 @@ public class TestPropertyGetter {
   @SuppressWarnings("unchecked")
   PngGetter methodPg = ProxyMethodGetter::new;
 
-  /******************** Field **********************/
+  /********************** Field *********************/
   @Test
   public void testField() {
     testPropertyNameGetter(fieldPg);
@@ -44,7 +44,12 @@ public class TestPropertyGetter {
     fieldPg.get(ThreeBoolean.class);
   }
 
-  /********************** Method *********************/
+  @Test(expected = IllegalArgumentException.class)
+  public void testInterface() {
+    fieldPg.get(Inter.class);
+  }
+
+  /********************* Method *********************/
   @Test
   public void testMethod() {
     testPropertyNameGetter(methodPg);
@@ -62,6 +67,7 @@ public class TestPropertyGetter {
     testInvokeTime(methodPg, 1_000_000);
   }
 
+  /********************* Test ************************/
   private void testConstructTime(PngGetter pg, long times) {
     for (int i = 0; i < times; i++) {
       pg.get(Object.class);
