@@ -24,7 +24,7 @@ import xdean.reflect.getter.MethodGetter;
  *
  * @param <T>
  */
-public class ProxyMethodGetter<T> implements MethodGetter<T>, MethodInterceptor {
+public class ProxyMethodGetter<T> implements MethodGetter<T> {
   private static final String BIND_CALLBACK;
   static {
     try {
@@ -45,6 +45,11 @@ public class ProxyMethodGetter<T> implements MethodGetter<T>, MethodInterceptor 
     LAST_METHOD.set(invocation);
   }
 
+  public static Object intercept(Object obj, Method method, Object[] args, MethodProxy proxy){
+    putMethod(method);
+    return null;
+  }
+
   private T mockT;
 
   /**
@@ -63,7 +68,7 @@ public class ProxyMethodGetter<T> implements MethodGetter<T>, MethodInterceptor 
       e.setUseCache(false);
       e.setCallbackType(MethodInterceptor.class);
       Class<? extends T> createClass = e.createClass();
-      Enhancer.registerCallbacks(createClass, new Callback[] { this });
+      Enhancer.registerCallbacks(createClass, new Callback[] { (MethodInterceptor) ProxyMethodGetter::intercept });
       T object = (T) UnsafeUtil.getUnsafe().allocateInstance(createClass);
       Method bindMethod = createClass.getDeclaredMethod(BIND_CALLBACK, Object.class);
       bindMethod.setAccessible(true);
@@ -74,12 +79,6 @@ public class ProxyMethodGetter<T> implements MethodGetter<T>, MethodInterceptor 
     } catch (InstantiationException e) {
       throw new IllegalStateException(e);
     }
-  }
-
-  @Override
-  public Object intercept(Object obj, Method method, Object[] args, MethodProxy proxy) throws Throwable {
-    putMethod(method);
-    return null;
   }
 
   /**
