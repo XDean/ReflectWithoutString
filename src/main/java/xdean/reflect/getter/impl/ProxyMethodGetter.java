@@ -18,7 +18,7 @@ import xdean.reflect.getter.MethodGetter;
 /**
  * Based on cglib.<br>
  * Don't support FINAL class and method.<br>
- * More expensive to construct than FieldGetterImpl.(Because need generate byte code.)
+ * More expensive than UnsafeFieldGetter to construct.(Because need generate byte code.)
  *
  * @author XDean
  *
@@ -45,13 +45,13 @@ public class ProxyMethodGetter<T> implements MethodGetter<T>, MethodInterceptor 
     LAST_METHOD.set(invocation);
   }
 
-  public static void main(String[] args) {
-    ProxyMethodGetter<Object> mg = new ProxyMethodGetter<>(Object.class);
-    System.out.println(mg.get(o -> o.getClass()));
-  }
-
   private T mockT;
 
+  /**
+   *
+   * @param clz
+   * @throws IllegalStateException If construct the mock object failed.
+   */
   @SuppressWarnings("unchecked")
   public ProxyMethodGetter(Class<T> clz) throws IllegalStateException {
     try {
@@ -82,17 +82,84 @@ public class ProxyMethodGetter<T> implements MethodGetter<T>, MethodInterceptor 
     return null;
   }
 
+  /**
+   * Get the mocked object. You can perform invocation on it directly. <br>
+   * For example:
+   *
+   * <pre>
+   * <code>
+   * FieldGetterImpl fgi = new FieldGetterImpl(SomeClass.class);
+   * fgi.getName(o -> o.prop);
+   * // is same as
+   * SomeClass sc = fgi.getMockObject();
+   * fgi.getName(sc.prop);
+   * </code>
+   * </pre>
+   *
+   * @return
+   */
+  public T getMockObject() {
+    return mockT;
+  }
+
   @Override
   public Method get(Function<T, ?> invoke) {
     return get(invoke.apply(getMockObject()));
   }
 
-  public T getMockObject() {
-    return mockT;
-  }
-
+  /**
+   * Get Method by an invocation result
+   *
+   * @param o a invocation result of the mock object
+   * @return
+   * @see #getMockObject()
+   */
   public Method get(Object invoke) {
     return getMethod().orElseThrow(() -> new IllegalArgumentException("No method invoked."));
   }
 
+  /**
+   * Get Method name by an invocation result
+   *
+   * @param o an invocation result of the mock object
+   * @return
+   * @see #getMockObject()
+   */
+  public String getName(Object o) {
+    return get(o).getName();
+  }
+
+  /**
+   * Get Method type by an invocation result
+   *
+   * @param o an invocation result of the mock object
+   * @return
+   * @see #getMockObject()
+   */
+  @SuppressWarnings("unchecked")
+  public <C> Class<? super C> getType(C o) {
+    return (Class<? super C>) get(o).getReturnType();
+  }
+
+  /**
+   * More readable version of {@link #getName(String)}
+   *
+   * @param o an invocation result of the mock object
+   * @see #getMockObject()
+   * @return
+   */
+  public String nameOf(Object o) {
+    return getName(o);
+  }
+
+  /**
+   * More readable version of {@link #getName(String)}
+   *
+   * @param o an invocation result of the mock object
+   * @see #getMockObject()
+   * @return
+   */
+  public <C> Class<? super C> typeOf(C o) {
+    return getType(o);
+  }
 }

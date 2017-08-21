@@ -16,21 +16,20 @@ import net.sf.cglib.proxy.NoOp;
 import sun.misc.Unsafe;
 import xdean.jex.util.lang.PrimitiveTypeUtil;
 import xdean.jex.util.lang.UnsafeUtil;
-import xdean.jex.util.log.Logable;
 import xdean.jex.util.reflect.ReflectUtil;
 import xdean.reflect.getter.FieldGetter;
 
 /**
  * Based on {@link Unsafe}.<br>
  * Supports all java class, but limit by primitive type field amount. For each primitive type with n bytes size, there
- * at most have 2^n this type fields. For example, construct {@code FieldGetterImpl} with a class with 3 boolean fields
- * will lead a {@code IllegalArgumentException}.
+ * at most have 2^n this type fields. For example, construct {@code UnsafeFieldGetter} with a class with 3 boolean
+ * fields will lead a {@code IllegalArgumentException}.
  *
  * @author XDean
  *
  * @param <T>
  */
-public class UnsafeFieldGetter<T> implements FieldGetter<T>, Logable {
+public class UnsafeFieldGetter<T> implements FieldGetter<T> {
 
   private static final Unsafe UNSAFE = UnsafeUtil.getUnsafe();
 
@@ -240,9 +239,7 @@ public class UnsafeFieldGetter<T> implements FieldGetter<T>, Logable {
 
   private void checkRange(Field field, int bits, long currentCount) {
     if ((bits < Long.SIZE && currentCount == 1L << bits) || currentCount == -1L) {
-      RuntimeException e = getException(field, bits);
-      log().error(e.getMessage(), e);
-      throw e;
+      throw getException(field, bits);
     }
   }
 
@@ -259,11 +256,11 @@ public class UnsafeFieldGetter<T> implements FieldGetter<T>, Logable {
    *
    * <pre>
    * <code>
-   * FieldGetterImpl fgi = new FieldGetterImpl(SomeClass.class);
-   * fgi.getName(o -> o.prop);
+   * UnsafeFieldGetter getter = new UnsafeFieldGetter(SomeClass.class);
+   * getter.getName(o -> o.prop);
    * // is same as
-   * SomeClass sc = fgi.getMockObject();
-   * fgi.getName(sc.prop);
+   * SomeClass sc = getter.getMockObject();
+   * getter.getName(sc.prop);
    * </code>
    * </pre>
    *
@@ -284,7 +281,7 @@ public class UnsafeFieldGetter<T> implements FieldGetter<T>, Logable {
   }
 
   /**
-   * Get field by a property value
+   * Get Field by a property value
    *
    * @param o a property value of the mock object
    * @return
@@ -298,7 +295,7 @@ public class UnsafeFieldGetter<T> implements FieldGetter<T>, Logable {
   }
 
   /**
-   * Get field name by a property value
+   * Get Field name by a property value
    *
    * @param o a property value of the mock object
    * @return
@@ -309,7 +306,7 @@ public class UnsafeFieldGetter<T> implements FieldGetter<T>, Logable {
   }
 
   /**
-   * Get field type by a property value
+   * Get Field type by a property value
    *
    * @param o a property value of the mock object
    * @return

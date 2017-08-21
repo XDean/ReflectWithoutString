@@ -9,12 +9,12 @@ import java.util.function.Function;
  * <code>
  * class Bean {
  *   TheType beanProp;
- *
+ * 
  *   public TheType getBeanProp() {
  *     return beanProp;
  *   }
  * }
- *
+ * 
  * PropertyGetter<Bean> pg = ...;
  * //name="beanProp"
  * String name = pg.getName(b -> b.getBeanProp());

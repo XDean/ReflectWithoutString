@@ -10,9 +10,8 @@ import lombok.Getter;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import xdean.reflect.getter.PropertyGetter;
-import xdean.reflect.getter.impl.UnsafeFieldGetter;
 import xdean.reflect.getter.impl.ProxyMethodGetter;
+import xdean.reflect.getter.impl.UnsafeFieldGetter;
 
 public class TestPropertyGetter {
   @SuppressWarnings("unchecked")
