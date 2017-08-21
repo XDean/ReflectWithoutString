@@ -17,13 +17,14 @@ import xdean.reflect.getter.MethodGetter;
 
 /**
  * Based on cglib.<br>
- * Expensive to construct.(Because need generate byte code.)
+ * Don't support FINAL class and method.<br>
+ * More expensive to construct than FieldGetterImpl.(Because need generate byte code.)
  *
  * @author XDean
  *
  * @param <T>
  */
-public class MethodGetterImpl<T> implements MethodGetter<T>, MethodInterceptor {
+public class ProxyMethodGetter<T> implements MethodGetter<T>, MethodInterceptor {
   private static final String BIND_CALLBACK;
   static {
     try {
@@ -45,14 +46,14 @@ public class MethodGetterImpl<T> implements MethodGetter<T>, MethodInterceptor {
   }
 
   public static void main(String[] args) {
-    MethodGetterImpl<Object> mg = new MethodGetterImpl<>(Object.class);
+    ProxyMethodGetter<Object> mg = new ProxyMethodGetter<>(Object.class);
     System.out.println(mg.get(o -> o.getClass()));
   }
 
-  T mockT;
+  private T mockT;
 
   @SuppressWarnings("unchecked")
-  public MethodGetterImpl(Class<T> clz) throws IllegalStateException {
+  public ProxyMethodGetter(Class<T> clz) throws IllegalStateException {
     try {
       if (Modifier.isFinal(clz.getModifiers())) {
         throw new IllegalArgumentException("Can't mock final class.");

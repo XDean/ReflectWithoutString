@@ -30,7 +30,7 @@ import xdean.reflect.getter.FieldGetter;
  *
  * @param <T>
  */
-public class FieldGetterImpl<T> implements FieldGetter<T>, Logable {
+public class UnsafeFieldGetter<T> implements FieldGetter<T>, Logable {
 
   private static final Unsafe UNSAFE = UnsafeUtil.getUnsafe();
 
@@ -44,10 +44,12 @@ public class FieldGetterImpl<T> implements FieldGetter<T>, Logable {
    * @throws IllegalStateException If construct the mock object failed.
    * @throws IllegalArgumentException If the class is not suitable. See the class doc.
    */
-  @SuppressWarnings("unchecked")
-  public FieldGetterImpl(Class<T> clz) throws IllegalStateException, IllegalArgumentException {
+  public UnsafeFieldGetter(Class<T> clz) throws IllegalStateException, IllegalArgumentException {
     try {
-      mockT = (T) UNSAFE.allocateInstance(clz);
+      if (clz.isInterface()) {
+        throw new IllegalArgumentException("Interface has no field.");
+      }
+      mockT = Modifier.isAbstract(clz.getModifiers()) ? newAbstract(clz) : newObject(clz);
       Field[] fields = ReflectUtil.getAllFields(clz, false);
       for (Field field : fields) {
         Class<?> type = field.getType();
@@ -79,15 +81,17 @@ public class FieldGetterImpl<T> implements FieldGetter<T>, Logable {
     objectMap.put(o, field);
   }
 
-  private Object newObject(Class<?> clz) throws InstantiationException {
-    return UNSAFE.allocateInstance(clz);
+  @SuppressWarnings("unchecked")
+  private <C> C newObject(Class<C> clz) throws InstantiationException {
+    return (C) UNSAFE.allocateInstance(clz);
   }
 
-  private Object newAbstract(Class<?> clz) throws InstantiationException {
+  private <C> C newAbstract(Class<C> clz) throws InstantiationException {
     return newObject(newClass(clz));
   }
 
-  private Class<?> newClass(Class<?> clz) {
+  @SuppressWarnings("unchecked")
+  private <C> Class<? extends C> newClass(Class<C> clz) {
     Enhancer enhancer = new Enhancer();
     if (clz.isInterface()) {
       enhancer.setInterfaces(new Class[] { clz });

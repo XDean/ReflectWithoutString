@@ -11,15 +11,15 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import xdean.reflect.getter.PropertyGetter;
-import xdean.reflect.getter.impl.FieldGetterImpl;
-import xdean.reflect.getter.impl.MethodGetterImpl;
+import xdean.reflect.getter.impl.UnsafeFieldGetter;
+import xdean.reflect.getter.impl.ProxyMethodGetter;
 
 public class TestPropertyGetter {
   @SuppressWarnings("unchecked")
-  PngGetter fieldPg = FieldGetterImpl::new;
+  PngGetter fieldPg = UnsafeFieldGetter::new;
 
   @SuppressWarnings("unchecked")
-  PngGetter methodPg = MethodGetterImpl::new;
+  PngGetter methodPg = ProxyMethodGetter::new;
 
   /******************** Field **********************/
   @Test
@@ -44,6 +44,7 @@ public class TestPropertyGetter {
     fieldPg.get(ThreeBoolean.class);
   }
 
+  /********************** Method *********************/
   @Test
   public void testMethod() {
     testPropertyNameGetter(methodPg);
