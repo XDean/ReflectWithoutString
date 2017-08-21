@@ -16,48 +16,49 @@ import xdean.reflect.getter.impl.MethodGetterImpl;
 
 public class TestPropertyGetter {
   @SuppressWarnings("unchecked")
-  PngGetter unsafePg = FieldGetterImpl::new;
+  PngGetter fieldPg = FieldGetterImpl::new;
 
   @SuppressWarnings("unchecked")
-  PngGetter proxyPg = MethodGetterImpl::new;
+  PngGetter methodPg = MethodGetterImpl::new;
 
+  /******************** Field **********************/
   @Test
-  public void testUnsafe() {
-    testPropertyNameGetter(unsafePg);
+  public void testField() {
+    testPropertyNameGetter(fieldPg);
   }
 
   @Ignore("Enable it to test efficiency")
   @Test
-  public void testUnsafeConstructTime() {
-    testConstructTime(unsafePg, 1_000);
-  }
-
-  @Ignore("Enable it to test efficiency")
-  @Test(timeout = 1000)
-  public void testUnsafeInvokeTime() {
-    testInvokeTime(unsafePg, 1_000_000);
-  }
-
-  @Test(expected = IllegalStateException.class)
-  public void testUnsafeBooleanOverflow() {
-    unsafePg.get(ThreeBoolean.class);
-  }
-
-  @Test
-  public void testProxy() {
-    testPropertyNameGetter(proxyPg);
-  }
-
-  @Ignore("Enable it to test efficiency")
-  @Test
-  public void testProxyConstructTime() {
-    testConstructTime(proxyPg, 1_000);
+  public void testFieldConstructTime() {
+    testConstructTime(fieldPg, 1_000);
   }
 
   @Ignore("Enable it to test efficiency")
   @Test(timeout = 1000)
-  public void testProxyInvokeTime() {
-    testInvokeTime(proxyPg, 1_000_000);
+  public void testFieldInvokeTime() {
+    testInvokeTime(fieldPg, 1_000_000);
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void testFieldBooleanOverflow() {
+    fieldPg.get(ThreeBoolean.class);
+  }
+
+  @Test
+  public void testMethod() {
+    testPropertyNameGetter(methodPg);
+  }
+
+  @Ignore("Enable it to test efficiency")
+  @Test
+  public void testMethodConstructTime() {
+    testConstructTime(methodPg, 1_000);
+  }
+
+  @Ignore("Enable it to test efficiency")
+  @Test(timeout = 1000)
+  public void testMethodInvokeTime() {
+    testInvokeTime(methodPg, 1_000_000);
   }
 
   private void testConstructTime(PngGetter pg, long times) {
@@ -79,7 +80,8 @@ public class TestPropertyGetter {
     testPrimitive(pg);
     testArray(pg);
     testClass(pg);
-    testAbs(pg);
+    testAbsClass(pg);
+    testAbsField(pg);
   }
 
   private void testAccessLevel(PngGetter pg) {
@@ -136,8 +138,18 @@ public class TestPropertyGetter {
     assertEquals(Class.class, png.getType(a -> a.getKlass()));
   }
 
-  private void testAbs(PngGetter pg) {
-    PropertyGetter<Abs> png = pg.get(Abs.class);
+  private void testAbsClass(PngGetter pg) {
+    PropertyGetter<AbsClass> png = pg.get(AbsClass.class);
+    assertEquals("o", png.getName(a -> a.getO()));
+    assertEquals("i", png.getName(a -> a.getI()));
+
+    assertEquals(Object.class, png.getType(a -> a.getO()));
+    assertEquals(int.class, png.getType(a -> a.getI()));
+
+  }
+
+  private void testAbsField(PngGetter pg) {
+    PropertyGetter<AbsField> png = pg.get(AbsField.class);
     assertEquals("absList", png.getName(a -> a.getAbsList()));
     assertEquals("clone", png.getName(a -> a.getClone()));
 
@@ -187,8 +199,18 @@ public class TestPropertyGetter {
     Class<?> klass;
   }
 
+  static interface Inter {
+    Object getObject();
+  }
+
   @Getter
-  static class Abs {
+  static abstract class AbsClass {
+    Object o;
+    int i;
+  }
+
+  @Getter
+  static class AbsField {
     AbstractList<?> absList;
     Cloneable clone;
   }
