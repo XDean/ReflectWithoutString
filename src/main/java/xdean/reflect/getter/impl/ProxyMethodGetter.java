@@ -45,7 +45,7 @@ public class ProxyMethodGetter<T> implements MethodGetter<T> {
     LAST_METHOD.set(invocation);
   }
 
-  public static Object intercept(Object obj, Method method, Object[] args, MethodProxy proxy){
+  public static Object intercept(Object obj, Method method, Object[] args, MethodProxy proxy) {
     putMethod(method);
     return null;
   }
@@ -135,9 +135,8 @@ public class ProxyMethodGetter<T> implements MethodGetter<T> {
    * @return
    * @see #getMockObject()
    */
-  @SuppressWarnings("unchecked")
-  public <C> Class<? super C> getType(C o) {
-    return (Class<? super C>) get(o).getReturnType();
+  public Class<?> getType(Object o) {
+    return get(o).getReturnType();
   }
 
   /**
@@ -158,7 +157,7 @@ public class ProxyMethodGetter<T> implements MethodGetter<T> {
    * @see #getMockObject()
    * @return
    */
-  public <C> Class<? super C> typeOf(C o) {
+  public Class<?> typeOf(Object o) {
     return getType(o);
   }
 }

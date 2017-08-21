@@ -312,9 +312,8 @@ public class UnsafeFieldGetter<T> implements FieldGetter<T> {
    * @return
    * @see #getMockObject()
    */
-  @SuppressWarnings("unchecked")
-  public <C> Class<? super C> getType(C o) {
-    return (Class<? super C>) get(o).getType();
+  public Class<?> getType(Object o) {
+    return get(o).getType();
   }
 
   /**
@@ -335,7 +334,7 @@ public class UnsafeFieldGetter<T> implements FieldGetter<T> {
    * @see #getMockObject()
    * @return
    */
-  public <C> Class<? super C> typeOf(C o) {
+  public Class<?> typeOf(Object o) {
     return getType(o);
   }
 }

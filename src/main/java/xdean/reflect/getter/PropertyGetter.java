@@ -9,17 +9,17 @@ import java.util.function.Function;
  * <code>
  * class Bean {
  *   TheType beanProp;
- * 
+ *
  *   public TheType getBeanProp() {
  *     return beanProp;
  *   }
  * }
- * 
+ *
  * PropertyGetter<Bean> pg = ...;
  * //name="beanProp"
  * String name = pg.getName(b -> b.getBeanProp());
  * //clz = TheType.class, even if beanProp's actual type is subclass of TheType
- * Class<? extends TheType> clz =  pg.getType(b->b.getBeanProp());
+ * Class<?> clz =  pg.getType(b -> b.getBeanProp());
  * </code>
  * </pre>
  *
@@ -37,7 +37,13 @@ public interface PropertyGetter<T> {
    */
   String getName(Function<T, ?> invoke);
 
-  <C> Class<? super C> getType(Function<T, C> invoke);
+  /**
+   * Get type of property related in the invocation.
+   *
+   * @param invoke
+   * @return
+   */
+  Class<?> getType(Function<T, ?> invoke);
 
   /**
    * More readable version of {@link #getName(Function)}.
@@ -55,7 +61,7 @@ public interface PropertyGetter<T> {
    * @param invoke
    * @return
    */
-  default <C> Class<? super C> typeOf(Function<T, C> invoke) {
+  default Class<?> typeOf(Function<T, ?> invoke) {
     return getType(invoke);
   }
 

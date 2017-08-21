@@ -18,8 +18,7 @@ public interface FieldGetter<T> extends InvokeGetter<T, Field>, PropertyGetter<T
   }
 
   @Override
-  @SuppressWarnings("unchecked")
-  default <C> Class<? super C> getType(Function<T, C> invoke) {
-    return (Class<? super C>) get(invoke).getType();
+  default Class<?> getType(Function<T, ?> invoke) {
+    return get(invoke).getType();
   }
 }

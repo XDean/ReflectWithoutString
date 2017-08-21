@@ -21,9 +21,8 @@ public interface MethodGetter<T> extends InvokeGetter<T, Method>, PropertyGetter
   }
 
   @Override
-  @SuppressWarnings("unchecked")
-  default <C> Class<? super C> getType(Function<T, C> invoke) {
-    return (Class<? super C>) get(invoke).getReturnType();
+  default Class<?> getType(Function<T, ?> invoke) {
+    return get(invoke).getReturnType();
   }
 
   /**
