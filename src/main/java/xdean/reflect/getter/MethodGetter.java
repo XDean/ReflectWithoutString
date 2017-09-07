@@ -1,12 +1,16 @@
 package xdean.reflect.getter;
 
+import static xdean.jex.util.task.TaskUtil.firstSuccess;
+
 import java.lang.reflect.Method;
+import java.util.Optional;
 import java.util.function.Function;
 
 /**
  * Get {@link Method} from an invocation. <br>
- * If invoke getter method, you can use the convenient method {@link #getName(Function)} and {@link #getType(Function)}
- * to get the property's information (from the Method's signature, so it works even there is no backing field).
+ * If invoke getter/setter method, you can use the convenient method {@link #getName(Function)} and
+ * {@link #getType(Function)} to get the property's information (from the Method's signature, so it works even there is
+ * no backing field).
  *
  * @author XDean
  * @param <T>
@@ -17,7 +21,12 @@ public interface MethodGetter<T> extends InvokeGetter<T, Method>, PropertyGetter
 
   @Override
   default String getName(Function<T, ?> invoke) {
-    return getterToName(get(invoke).getName());
+    String name = get(invoke).getName();
+    return Optional.ofNullable(
+        firstSuccess(
+            () -> getterToName(name),
+            () -> setterToName(name)))
+        .orElseThrow(() -> new IllegalArgumentException("Can't get property name from method name: " + name));
   }
 
   @Override
@@ -38,6 +47,14 @@ public interface MethodGetter<T> extends InvokeGetter<T, Method>, PropertyGetter
       return ((char) (getterName.charAt(2) + UP_LOW_GAP)) + getterName.substring(3);
     } else {
       throw new IllegalArgumentException("Getter method name must be (get|is)XxxXxx, but was \"" + getterName + "\".");
+    }
+  }
+
+  static String setterToName(String setterName) {
+    if (setterName.startsWith("set") && setterName.length() > 3) {
+      return ((char) (setterName.charAt(3) + UP_LOW_GAP)) + setterName.substring(4);
+    } else {
+      throw new IllegalArgumentException("Setter method name must be (get|is)XxxXxx, but was \"" + setterName + "\".");
     }
   }
 }
