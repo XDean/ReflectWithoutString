@@ -1,7 +1,6 @@
 package xdean.reflect.getter.impl;
 
-import static xdean.jex.util.lang.ExceptionUtil.throwIt;
-import static xdean.jex.util.task.TaskUtil.firstSuccess;
+import static xdean.jex.util.task.TaskUtil.firstNonNull;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
@@ -288,10 +287,10 @@ public class UnsafeFieldGetter<T> implements FieldGetter<T> {
    * @see #getMockObject()
    */
   public Field get(Object o) {
-    return firstSuccess(
+    return firstNonNull(
         () -> objectMap.get(o),
-        () -> primitiveMap.get(o),
-        () -> throwIt(new IllegalStateException("The given value isn't the mock object's property.")));
+        () -> primitiveMap.get(o))
+        .orElseThrow(() -> new IllegalStateException("The given value isn't the mock object's property."));
   }
 
   /**
