@@ -65,7 +65,7 @@ public class ProxyMethodGetter<T> implements MethodGetter<T> {
       }
       Enhancer e = new Enhancer();
       e.setSuperclass(clz);
-      e.setUseCache(false);
+      e.setUseCache(true);
       e.setCallbackType(MethodInterceptor.class);
       Class<? extends T> createClass = e.createClass();
       Enhancer.registerCallbacks(createClass, new Callback[] { (MethodInterceptor) ProxyMethodGetter::intercept });

@@ -96,7 +96,7 @@ public class UnsafeFieldGetter<T> implements FieldGetter<T> {
     } else {
       enhancer.setSuperclass(clz);
     }
-    enhancer.setUseCache(false);
+    enhancer.setUseCache(true);
     enhancer.setCallbackType(NoOp.class);
     return enhancer.createClass();
   }
