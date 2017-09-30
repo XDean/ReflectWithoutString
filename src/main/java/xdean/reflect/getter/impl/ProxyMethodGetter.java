@@ -37,15 +37,15 @@ public class ProxyMethodGetter<T> implements MethodGetter<T> {
 
   private static final ThreadLocal<Method> LAST_METHOD = new ThreadLocal<Method>();
 
-  public static Optional<Method> getMethod() {
+  private static Optional<Method> getMethod() {
     return Optional.ofNullable(LAST_METHOD.get());
   }
 
-  public static void putMethod(Method invocation) {
+  private static void putMethod(Method invocation) {
     LAST_METHOD.set(invocation);
   }
 
-  public static Object intercept(Object obj, Method method, Object[] args, MethodProxy proxy) {
+  private static Object intercept(Object obj, Method method, Object[] args, MethodProxy proxy) {
     putMethod(method);
     return null;
   }
