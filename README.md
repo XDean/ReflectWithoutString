@@ -1,4 +1,7 @@
 # Reflect without String
+[![Build Status](https://travis-ci.org/XDean/ReflectWithoutString.svg?branch=master)](https://travis-ci.org/XDean/ReflectWithoutString)
+[![codecov.io](http://codecov.io/github/XDean/ReflectWithoutString/coverage.svg?branch=master)](https://codecov.io/gh/XDean/ReflectWithoutString/branch/master)
+
 - Reflect method and field without String.
 - Get the reflect object from invocation.
 - A type-safe solution of reflection.
