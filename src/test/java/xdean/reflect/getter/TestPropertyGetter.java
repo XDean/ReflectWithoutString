@@ -14,10 +14,8 @@ import xdean.reflect.getter.impl.ProxyMethodGetter;
 import xdean.reflect.getter.impl.UnsafeFieldGetter;
 
 public class TestPropertyGetter {
-  @SuppressWarnings("unchecked")
   PngGetter fieldPg = UnsafeFieldGetter::new;
 
-  @SuppressWarnings("unchecked")
   PngGetter methodPg = ProxyMethodGetter::new;
 
   /********************** Field *********************/
