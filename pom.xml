@@ -11,18 +11,11 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 	</properties>
 
-	<repositories>
-		<repository>
-			<id>jitpack.io</id>
-			<url>https://jitpack.io</url>
-		</repository>
-	</repositories>
-
 	<dependencies>
 		<dependency>
 			<groupId>com.github.XDean</groupId>
 			<artifactId>Java-EX</artifactId>
-			<version>0.0.6-SNAPSHOT</version>
+			<version>0.0.6</version>
 		</dependency>
 		<dependency>
 			<groupId>cglib</groupId>
