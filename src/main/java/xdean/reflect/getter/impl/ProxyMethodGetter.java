@@ -35,7 +35,7 @@ public class ProxyMethodGetter<T> implements MethodGetter<T> {
     }
   }
 
-  private static final ThreadLocal<Method> LAST_METHOD = new ThreadLocal<Method>();
+  private static final ThreadLocal<Method> LAST_METHOD = new ThreadLocal<>();
 
   private static Optional<Method> getMethod() {
     return Optional.ofNullable(LAST_METHOD.get());
@@ -88,14 +88,14 @@ public class ProxyMethodGetter<T> implements MethodGetter<T> {
    * <pre>
    * <code>
    * FieldGetterImpl fgi = new FieldGetterImpl(SomeClass.class);
-   * fgi.getName(o -> o.prop);
+   * fgi.getName(o -&#62; o.prop);
    * // is same as
    * SomeClass sc = fgi.getMockObject();
    * fgi.getName(sc.prop);
    * </code>
    * </pre>
    *
-   * @return
+   * @return the mock object
    */
   public T getMockObject() {
     return mockT;
@@ -109,8 +109,8 @@ public class ProxyMethodGetter<T> implements MethodGetter<T> {
   /**
    * Get Method by an invocation result
    *
-   * @param o a invocation result of the mock object
-   * @return
+   * @param invoke a invocation result of the mock object
+   * @return the method
    * @see #getMockObject()
    */
   public Method get(Object invoke) {
@@ -121,7 +121,7 @@ public class ProxyMethodGetter<T> implements MethodGetter<T> {
    * Get Method name by an invocation result
    *
    * @param o an invocation result of the mock object
-   * @return
+   * @return the method name
    * @see #getMockObject()
    */
   public String getName(Object o) {
@@ -132,7 +132,7 @@ public class ProxyMethodGetter<T> implements MethodGetter<T> {
    * Get Method type by an invocation result
    *
    * @param o an invocation result of the mock object
-   * @return
+   * @return the method return type
    * @see #getMockObject()
    */
   public Class<?> getType(Object o) {
@@ -140,22 +140,22 @@ public class ProxyMethodGetter<T> implements MethodGetter<T> {
   }
 
   /**
-   * More readable version of {@link #getName(String)}
+   * More readable version of {@link #getName(Object)}
    *
    * @param o an invocation result of the mock object
    * @see #getMockObject()
-   * @return
+   * @return the method name
    */
   public String nameOf(Object o) {
     return getName(o);
   }
 
   /**
-   * More readable version of {@link #getName(String)}
+   * More readable version of {@link #getType(Object)}
    *
    * @param o an invocation result of the mock object
    * @see #getMockObject()
-   * @return
+   * @return the method return type
    */
   public Class<?> typeOf(Object o) {
     return getType(o);

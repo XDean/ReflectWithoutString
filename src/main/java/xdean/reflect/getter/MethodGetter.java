@@ -26,7 +26,7 @@ public interface MethodGetter<T> extends InvokeGetter<T, Method>, PropertyGetter
   /**
    * An adapter for setter method reference
    *
-   * @param invoke
+   * @param setter
    * @return
    */
   default Method get(BiConsumer<T, ?> setter) {

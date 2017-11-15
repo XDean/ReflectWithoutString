@@ -256,7 +256,7 @@ public class UnsafeFieldGetter<T> implements FieldGetter<T> {
    * <pre>
    * <code>
    * UnsafeFieldGetter getter = new UnsafeFieldGetter(SomeClass.class);
-   * getter.getName(o -> o.prop);
+   * getter.getName(o -&#62; o.prop);
    * // is same as
    * SomeClass sc = getter.getMockObject();
    * getter.getName(sc.prop);
@@ -297,7 +297,7 @@ public class UnsafeFieldGetter<T> implements FieldGetter<T> {
    * Get Field name by a property value
    *
    * @param o a property value of the mock object
-   * @return
+   * @return the field name
    * @see #getMockObject()
    */
   public String getName(Object o) {
@@ -308,7 +308,7 @@ public class UnsafeFieldGetter<T> implements FieldGetter<T> {
    * Get Field type by a property value
    *
    * @param o a property value of the mock object
-   * @return
+   * @return the field type
    * @see #getMockObject()
    */
   public Class<?> getType(Object o) {
@@ -316,22 +316,22 @@ public class UnsafeFieldGetter<T> implements FieldGetter<T> {
   }
 
   /**
-   * More readable version of {@link #getName(String)}
+   * More readable version of {@link #getName(Object)}
    *
    * @param o a property value of the mock object
    * @see #getMockObject()
-   * @return
+   * @return the field name
    */
   public String nameOf(Object o) {
     return getName(o);
   }
 
   /**
-   * More readable version of {@link #getName(String)}
+   * More readable version of {@link #getType(Object)}
    *
    * @param o a property value of the mock object
    * @see #getMockObject()
-   * @return
+   * @return the field type
    */
   public Class<?> typeOf(Object o) {
     return getType(o);

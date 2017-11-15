@@ -17,11 +17,11 @@ import xdean.jex.internal.codecov.CodecovIgnore;
  *   }
  * }
  *
- * PropertyGetter<Bean> pg = ...;
+ * PropertyGetter&#60;Bean&#62; pg = ...;
  * //name="beanProp"
- * String name = pg.getName(b -> b.getBeanProp());
+ * String name = pg.getName(b -&#62; b.getBeanProp());
  * //clz = TheType.class, even if beanProp's actual type is subclass of TheType
- * Class<?> clz =  pg.getType(b -> b.getBeanProp());
+ * Class&#60;?&#62; clz =  pg.getType(b -&#62; b.getBeanProp());
  * </code>
  * </pre>
  *
@@ -74,7 +74,7 @@ public interface PropertyGetter<T> {
    * <pre>
    * <code>
    *  PropertyGetter pg = ...;
-   *  pg.getName(b -> b.beanProp);
+   *  pg.getName(b -&#62; b.beanProp);
    * </code>
    * </pre>
    *
