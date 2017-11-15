@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.github.XDean</groupId>
 	<artifactId>ReflectWithoutString</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0</version>
 	<name>ReflectWithoutString</name>
 	<description>Reflect without String</description>
 	<url>https://github.com/XDean/ReflectWithoutString</url>
