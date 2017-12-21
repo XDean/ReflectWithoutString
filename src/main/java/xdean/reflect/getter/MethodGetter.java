@@ -29,7 +29,7 @@ public interface MethodGetter<T> extends InvokeGetter<T, Method>, PropertyGetter
    * @param setter
    * @return
    */
-  default Method get(BiConsumer<T, ?> setter) {
+  default <O> Method get(BiConsumer<T, O> setter) {
     return get(Helper.setterToFunction(setter));
   }
 
@@ -43,7 +43,7 @@ public interface MethodGetter<T> extends InvokeGetter<T, Method>, PropertyGetter
         .orElseThrow(() -> new IllegalArgumentException("Can't get property name from method name: " + name));
   }
 
-  default String getName(BiConsumer<T, ?> setter) {
+  default <O> String getName(BiConsumer<T, O> setter) {
     return getName(Helper.setterToFunction(setter));
   }
 
@@ -52,15 +52,15 @@ public interface MethodGetter<T> extends InvokeGetter<T, Method>, PropertyGetter
     return get(invoke).getReturnType();
   }
 
-  default Class<?> getType(BiConsumer<T, ?> setter) {
+  default <O> Class<?> getType(BiConsumer<T, O> setter) {
     return getType(Helper.setterToFunction(setter));
   }
 
-  default String nameOf(BiConsumer<T, ?> setter) {
+  default <O> String nameOf(BiConsumer<T, O> setter) {
     return nameOf(Helper.setterToFunction(setter));
   }
 
-  default Class<?> typeOf(BiConsumer<T, ?> setter) {
+  default <O> Class<?> typeOf(BiConsumer<T, O> setter) {
     return typeOf(Helper.setterToFunction(setter));
   }
 

@@ -9,6 +9,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import lombok.Getter;
+import lombok.Setter;
 import xdean.reflect.getter.impl.ProxyMethodGetter;
 import xdean.reflect.getter.impl.UnsafeFieldGetter;
 
@@ -41,7 +42,7 @@ public class TestPropertyGetter {
     assertEquals("b1", actual.getName(t -> t.b1));
     assertEquals("b2", actual.getName(t -> t.b2));
     assertEquals("b3", actual.getName(t -> t.b3));
-    assertEquals("c1", actual.getName(t -> t.c1));//cdfisl
+    assertEquals("c1", actual.getName(t -> t.c1));// cdfisl
     assertEquals("d1", actual.getName(t -> t.d1));
     assertEquals("f1", actual.getName(t -> t.f1));
     assertEquals("i1", actual.getName(t -> t.i1));
@@ -71,6 +72,20 @@ public class TestPropertyGetter {
   @Test(timeout = 1000)
   public void testMethodInvokeTime() {
     testInvokeTime(methodPg, 1_000_000);
+  }
+
+  @Test
+  public void testSetter() {
+    MethodGetter<Primitive> mg = new ProxyMethodGetter<>(Primitive.class);
+    assertEquals("b", mg.getName(Primitive::setB));
+    assertEquals("c", mg.getName(Primitive::setC));
+    assertEquals("d", mg.getName(Primitive::setD));
+    assertEquals("f", mg.getName(Primitive::setF));
+    assertEquals("i", mg.getName(Primitive::setI));
+    assertEquals("l", mg.getName(Primitive::setL));
+    assertEquals("o", mg.getName(Primitive::setO));
+    assertEquals("s", mg.getName(Primitive::setS));
+    assertEquals("bool", mg.getName(Primitive::setBool));
   }
 
   /********************* Test ************************/
@@ -189,6 +204,7 @@ public class TestPropertyGetter {
   }
 
   @Getter
+  @Setter
   static class Primitive {
     byte b;
     char c;
@@ -198,6 +214,7 @@ public class TestPropertyGetter {
     long l;
     double d;
     float f;
+    Object o;
   }
 
   @Getter
@@ -241,7 +258,7 @@ public class TestPropertyGetter {
     int i1, i2;
     float f1, f2;
     long l1, l2;
-    byte bt1,bt2;
+    byte bt1, bt2;
     double d1, d2;
     short s1, s2;
     char c1, c2;
