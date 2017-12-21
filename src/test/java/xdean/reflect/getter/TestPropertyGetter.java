@@ -5,11 +5,10 @@ import static xdean.jex.util.lang.ExceptionUtil.uncheck;
 
 import java.util.AbstractList;
 
-import lombok.Getter;
-
 import org.junit.Ignore;
 import org.junit.Test;
 
+import lombok.Getter;
 import xdean.reflect.getter.impl.ProxyMethodGetter;
 import xdean.reflect.getter.impl.UnsafeFieldGetter;
 
@@ -36,9 +35,19 @@ public class TestPropertyGetter {
     testInvokeTime(fieldPg, 1_000_000);
   }
 
-  @Test(expected = IllegalArgumentException.class)
+  @Test
   public void testFieldBooleanOverflow() {
-    fieldPg.get(ThreeBoolean.class);
+    FieldGetter<ManyPrimitive> actual = (FieldGetter<ManyPrimitive>) fieldPg.get(ManyPrimitive.class);
+    assertEquals("b1", actual.getName(t -> t.b1));
+    assertEquals("b2", actual.getName(t -> t.b2));
+    assertEquals("b3", actual.getName(t -> t.b3));
+    assertEquals("c1", actual.getName(t -> t.c1));//cdfisl
+    assertEquals("d1", actual.getName(t -> t.d1));
+    assertEquals("f1", actual.getName(t -> t.f1));
+    assertEquals("i1", actual.getName(t -> t.i1));
+    assertEquals("s1", actual.getName(t -> t.s1));
+    assertEquals("l1", actual.getName(t -> t.l1));
+    assertEquals("bt1", actual.getName(t -> t.bt1));
   }
 
   @Test(expected = IllegalArgumentException.class)
@@ -138,7 +147,6 @@ public class TestPropertyGetter {
   private void testClass(PngGetter pg) {
     PropertyGetter<Klass> png = pg.get(Klass.class);
     assertEquals("klass", png.getName(a -> a.getKlass()));
-
     assertEquals(Class.class, png.getType(a -> a.getKlass()));
   }
 
@@ -188,8 +196,8 @@ public class TestPropertyGetter {
     int i;
     short s;
     long l;
-    float f;
     double d;
+    float f;
   }
 
   @Getter
@@ -228,8 +236,15 @@ public class TestPropertyGetter {
     Cloneable c;
   }
 
-  static class ThreeBoolean {
-    boolean a, b, c;
+  static class ManyPrimitive {
+    boolean b1, b2, b3, b4;
+    int i1, i2;
+    float f1, f2;
+    long l1, l2;
+    byte bt1,bt2;
+    double d1, d2;
+    short s1, s2;
+    char c1, c2;
   }
 
   @FunctionalInterface

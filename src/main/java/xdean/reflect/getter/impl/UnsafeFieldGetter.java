@@ -1,14 +1,21 @@
 package xdean.reflect.getter.impl;
 
+import static xdean.jex.util.lang.ExceptionUtil.uncheck;
 import static xdean.jex.util.task.TaskUtil.firstNonNull;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.IdentityHashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.function.Function;
+
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Iterators;
+import com.google.common.collect.Multimap;
 
 import net.sf.cglib.proxy.Enhancer;
 import net.sf.cglib.proxy.NoOp;
@@ -19,10 +26,7 @@ import xdean.jex.util.reflect.ReflectUtil;
 import xdean.reflect.getter.FieldGetter;
 
 /**
- * Based on {@link Unsafe}.<br>
- * Supports all java class, but limit by primitive type field amount. For each primitive type with n bytes size, there
- * at most have 2^n this type fields. For example, construct {@code UnsafeFieldGetter} with a class with 3 boolean
- * fields will lead a {@code IllegalArgumentException}.
+ * Based on {@link Unsafe}.
  *
  * @author XDean
  *
@@ -33,7 +37,7 @@ public class UnsafeFieldGetter<T> implements FieldGetter<T> {
   private static final Unsafe UNSAFE = UnsafeUtil.getUnsafe();
 
   private T mockT;
-  private Map<Object, Field> primitiveMap = new HashMap<>();
+  private Multimap<Class<?>, Field> primitives = HashMultimap.create();
   private Map<Object, Field> objectMap = new IdentityHashMap<>();
 
   /**
@@ -110,163 +114,85 @@ public class UnsafeFieldGetter<T> implements FieldGetter<T> {
   }
 
   private void handlePrimitive(Field field) {
-    switch (field.getType().getName()) {
+    field.setAccessible(true);
+    primitives.put(field.getType(), field);
+  }
+
+  private Field getPrimitive(Function<T, ?> invoke) {
+    Object value = invoke.apply(mockT);
+    Class<?> type = PrimitiveTypeUtil.toPrimitive(value.getClass());
+    Collection<Field> fields = primitives.get(type);
+    if (fields.size() == 1) {
+      return fields.iterator().next();
+    }
+    int count = 0;
+    while (true) {
+      Map<Object, Field> map = new HashMap<>();
+      Iterator<? extends Object> allValue = getAllValue(type);
+      Iterator<Field> fieldIterator = fields.iterator();
+      Object defaultValue = allValue.next();
+      int i = count;
+      while (i-- > 0) {
+        uncheck(() -> fieldIterator.next().set(mockT, defaultValue));
+      }
+      while (allValue.hasNext()) {
+        if (!fieldIterator.hasNext()) {
+          break;
+        }
+        Field field = fieldIterator.next();
+        Object next = allValue.next();
+        uncheck(() -> field.set(mockT, next));
+        map.put(next, field);
+      }
+      fieldIterator.forEachRemaining(f -> uncheck(() -> f.set(mockT, defaultValue)));
+      value = invoke.apply(mockT);
+      if (value != defaultValue) {
+        return map.get(value);
+      }
+      count += map.size();
+    }
+  }
+
+  @SuppressWarnings("unchecked")
+  private <E> Iterator<E> getAllValue(Class<E> clz) {
+    switch (PrimitiveTypeUtil.toPrimitive(clz).getName()) {
     case "int":
-      handleInt(field);
-      break;
+      return (Iterator<E>) this.<Integer> getIterator(0, i -> i == Integer.MAX_VALUE ? null : i + 1);
     case "short":
-      handleShort(field);
-      break;
+      return (Iterator<E>) this.<Short> getIterator((short) 0, i -> i == Short.MAX_VALUE ? null : (short) (i + 1));
     case "long":
-      handleLong(field);
-      break;
+      return (Iterator<E>) this.<Long> getIterator(0L, i -> i == Long.MAX_VALUE ? null : i + 1L);
     case "double":
-      handleDouble(field);
-      break;
+      return (Iterator<E>) Iterators.transform(getAllValue(Long.class), l -> Double.longBitsToDouble(l));
     case "float":
-      handleFloat(field);
-      break;
+      return (Iterator<E>) this.<Float> getIterator(0f, i -> i == Float.MAX_VALUE ? null : i + 1f);
     case "boolean":
-      handleBoolean(field);
-      break;
+      return (Iterator<E>) this.<Boolean> getIterator(Boolean.TRUE, i -> i ? Boolean.FALSE : null);
     case "char":
-      handleChar(field);
-      break;
+      return (Iterator<E>) this.<Character> getIterator((char) 0, i -> i == Character.MAX_VALUE ? null : (char) (i + 1));
     case "byte":
-      handleByte(field);
-      break;
+      return (Iterator<E>) this.<Byte> getIterator((byte) 0, i -> i == Byte.MAX_VALUE ? null : (byte) (i + 1));
     default:
       throw new IllegalArgumentException("Not a primitive type.");
     }
   }
 
-  private short booleanCount = 0;
+  private <E> Iterator<E> getIterator(E first, Function<E, E> func) {
+    return new Iterator<E>() {
+      E next = first;
 
-  private void handleBoolean(Field field) {
-    checkRange(field, 1, booleanCount);
-    long offset = UNSAFE.objectFieldOffset(field);
-    boolean bool = booleanCount == 0;
-    UNSAFE.putBoolean(mockT, offset, bool);
-    primitiveMap.put(bool, field);
-    booleanCount++;
-  }
+      @Override
+      public boolean hasNext() {
+        return next != null;
+      }
 
-  private short byteCount = 0;
-
-  private void handleByte(Field field) {
-    checkRange(field, Byte.SIZE, byteCount);
-    long offset = UNSAFE.objectFieldOffset(field);
-    byte b = (byte) byteCount;
-    UNSAFE.putByte(mockT, offset, b);
-    primitiveMap.put(b, field);
-    byteCount++;
-  }
-
-  private int charCount;
-
-  private void handleChar(Field field) {
-    checkRange(field, Character.SIZE, charCount);
-    long offset = UNSAFE.objectFieldOffset(field);
-    char i = (char) charCount;
-    UNSAFE.putInt(mockT, offset, i);
-    primitiveMap.put(i, field);
-    charCount++;
-  }
-
-  private long intCount;
-
-  private void handleInt(Field field) {
-    checkRange(field, Integer.SIZE, intCount);
-    long offset = UNSAFE.objectFieldOffset(field);
-    int i = (int) intCount;
-    UNSAFE.putInt(mockT, offset, i);
-    primitiveMap.put(i, field);
-    intCount++;
-  }
-
-  private int shortCount;
-
-  private void handleShort(Field field) {
-    checkRange(field, Short.SIZE, shortCount);
-    long offset = UNSAFE.objectFieldOffset(field);
-    short i = (short) shortCount;
-    UNSAFE.putShort(mockT, offset, i);
-    primitiveMap.put(i, field);
-    shortCount++;
-  }
-
-  private long longCount;
-
-  private void handleLong(Field field) {
-    checkRange(field, Long.SIZE, longCount);
-    long offset = UNSAFE.objectFieldOffset(field);
-    long l = longCount;
-    UNSAFE.putLong(mockT, offset, l);
-    primitiveMap.put(l, field);
-    longCount++;
-  }
-
-  private long floatCount;
-
-  private void handleFloat(Field field) {
-    checkRange(field, Float.SIZE, floatCount);
-    long offset = UNSAFE.objectFieldOffset(field);
-    float f = Float.intBitsToFloat((int) floatCount);
-    UNSAFE.putFloat(mockT, offset, f);
-    primitiveMap.put(f, field);
-    floatCount++;
-  }
-
-  private long doubleCount;
-
-  private void handleDouble(Field field) {
-    checkRange(field, Double.SIZE, doubleCount);
-    long offset = UNSAFE.objectFieldOffset(field);
-    double d = Double.longBitsToDouble(doubleCount);
-    UNSAFE.putDouble(mockT, offset, d);
-    primitiveMap.put(d, field);
-    doubleCount++;
-  }
-
-  private void checkRange(Field field, int bits, short currentCount) {
-    checkRange(field, bits, Short.toUnsignedLong(currentCount));
-  }
-
-  private void checkRange(Field field, int bits, int currentCount) {
-    checkRange(field, bits, Integer.toUnsignedLong(currentCount));
-  }
-
-  private void checkRange(Field field, int bits, long currentCount) {
-    if ((bits < Long.SIZE && currentCount == 1L << bits) || currentCount == -1L) {
-      throw getException(field, bits);
-    }
-  }
-
-  private RuntimeException getException(Field field, int bits) {
-    Class<?> type = field.getType();
-    return new IllegalArgumentException(String.format(
-        "Can't generate %s preoperty (%s)'s name getter, only support %s %ss.",
-        type.getName(), field.getName(), 1L << bits, type.getName()));
-  }
-
-  /**
-   * Get the mocked object. You can perform invocation on it directly. <br>
-   * For example:
-   *
-   * <pre>
-   * <code>
-   * UnsafeFieldGetter getter = new UnsafeFieldGetter(SomeClass.class);
-   * getter.getName(o -&#62; o.prop);
-   * // is same as
-   * SomeClass sc = getter.getMockObject();
-   * getter.getName(sc.prop);
-   * </code>
-   * </pre>
-   *
-   * @return
-   */
-  public T getMockObject() {
-    return mockT;
+      @Override
+      public E next() {
+        E current = next;
+        next = func.apply(current);
+        return current;
+      }
+    };
   }
 
   @Override
@@ -276,64 +202,9 @@ public class UnsafeFieldGetter<T> implements FieldGetter<T> {
 
   @Override
   public Field get(Function<T, ?> invoke) {
-    return get(invoke.apply(getMockObject()));
-  }
-
-  /**
-   * Get Field by a property value
-   *
-   * @param o a property value of the mock object
-   * @return
-   * @see #getMockObject()
-   */
-  public Field get(Object o) {
     return firstNonNull(
-        () -> objectMap.get(o),
-        () -> primitiveMap.get(o))
-        .orElseThrow(() -> new IllegalStateException("The given value isn't the mock object's property."));
-  }
-
-  /**
-   * Get Field name by a property value
-   *
-   * @param o a property value of the mock object
-   * @return the field name
-   * @see #getMockObject()
-   */
-  public String getName(Object o) {
-    return get(o).getName();
-  }
-
-  /**
-   * Get Field type by a property value
-   *
-   * @param o a property value of the mock object
-   * @return the field type
-   * @see #getMockObject()
-   */
-  public Class<?> getType(Object o) {
-    return get(o).getType();
-  }
-
-  /**
-   * More readable version of {@link #getName(Object)}
-   *
-   * @param o a property value of the mock object
-   * @see #getMockObject()
-   * @return the field name
-   */
-  public String nameOf(Object o) {
-    return getName(o);
-  }
-
-  /**
-   * More readable version of {@link #getType(Object)}
-   *
-   * @param o a property value of the mock object
-   * @see #getMockObject()
-   * @return the field type
-   */
-  public Class<?> typeOf(Object o) {
-    return getType(o);
+        () -> objectMap.get(invoke.apply(mockT)),
+        () -> getPrimitive(invoke))
+            .orElseThrow(() -> new IllegalStateException("The given value isn't the mock object's property."));
   }
 }

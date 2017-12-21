@@ -42,9 +42,9 @@
 ```
 
 ## Current two implementations compare
-Class | Base on | Construct cost | Support field invoke | Limit (Can't handle)
+Class | Base on | Construct cost | Support field invoke | Limit
 --- | --- | --- | --- |---
-`UnsafeFieldGetter` | `com.misc.Unsafe` | 0.5s for 1M construct | Yes | Too many primitive type fields
+`UnsafeFieldGetter` | `com.misc.Unsafe` | 0.5s for 1M construct | Yes | No
 `ProxyMethodGetter` | [cglib](link1) | 1s for 1K construct | No | Final class and method
 
 <sup>*Also see there javadoc*</sup>

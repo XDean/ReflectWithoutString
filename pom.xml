@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.github.XDean</groupId>
 	<artifactId>ReflectWithoutString</artifactId>
-	<version>1.0</version>
+	<version>1.1</version>
 	<name>ReflectWithoutString</name>
 	<description>Reflect without String</description>
 	<url>https://github.com/XDean/ReflectWithoutString</url>
@@ -18,12 +18,19 @@
 		<dependency>
 			<groupId>com.github.XDean</groupId>
 			<artifactId>Java-EX</artifactId>
-			<version>0.0.6</version>
+			<version>0.0.6.2</version>
 		</dependency>
 		<dependency>
 			<groupId>cglib</groupId>
 			<artifactId>cglib</artifactId>
 			<version>3.2.4</version>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<version>1.16.14</version>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
