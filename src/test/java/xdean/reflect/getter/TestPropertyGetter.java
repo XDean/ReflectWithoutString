@@ -42,7 +42,7 @@ public class TestPropertyGetter {
     assertEquals("b1", actual.getName(t -> t.b1));
     assertEquals("b2", actual.getName(t -> t.b2));
     assertEquals("b3", actual.getName(t -> t.b3));
-    assertEquals("c1", actual.getName(t -> t.c1));// cdfisl
+    assertEquals("c1", actual.getName(t -> t.c1));
     assertEquals("d1", actual.getName(t -> t.d1));
     assertEquals("f1", actual.getName(t -> t.f1));
     assertEquals("i1", actual.getName(t -> t.i1));
