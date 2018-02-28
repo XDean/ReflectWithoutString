@@ -1,4 +1,4 @@
-package xdean.reflect.getter.util;
+package xdean.reflect.getter.internal.util;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;

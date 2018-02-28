@@ -3,4 +3,4 @@
  * 
  * @author Dean Xu (XDean@github.com)
  */
-package xdean.reflect.getter.util;
+package xdean.reflect.getter.internal.util;

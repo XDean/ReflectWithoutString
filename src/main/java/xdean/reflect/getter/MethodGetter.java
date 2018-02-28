@@ -1,13 +1,13 @@
 package xdean.reflect.getter;
 
-import static xdean.reflect.getter.util.TaskUtil.firstSuccess;
+import static xdean.reflect.getter.internal.util.TaskUtil.firstSuccess;
 
 import java.lang.reflect.Method;
 import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
-import xdean.reflect.getter.util.TaskUtil;
+import xdean.reflect.getter.internal.util.TaskUtil;
 
 /**
  * Get {@link Method} from an invocation. <br>

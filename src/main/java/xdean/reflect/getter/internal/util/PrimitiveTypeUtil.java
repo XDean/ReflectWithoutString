@@ -1,4 +1,4 @@
-package xdean.reflect.getter.util;
+package xdean.reflect.getter.internal.util;
 
 import java.util.HashMap;
 import java.util.Map;

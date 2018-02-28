@@ -1,7 +1,7 @@
 package xdean.reflect.getter;
 
 import static org.junit.Assert.assertEquals;
-import static xdean.reflect.getter.util.ExceptionUtil.uncheck;
+import static xdean.reflect.getter.internal.util.ExceptionUtil.uncheck;
 
 import java.util.AbstractList;
 

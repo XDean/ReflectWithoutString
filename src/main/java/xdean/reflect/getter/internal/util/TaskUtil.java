@@ -1,6 +1,6 @@
-package xdean.reflect.getter.util;
+package xdean.reflect.getter.internal.util;
 
-import static xdean.reflect.getter.util.ExceptionUtil.uncatch;
+import static xdean.reflect.getter.internal.util.ExceptionUtil.uncatch;
 
 import java.util.Optional;
 
