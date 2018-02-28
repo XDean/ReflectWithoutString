@@ -1,14 +1,13 @@
 package xdean.reflect.getter;
 
-import static xdean.jex.util.task.TaskUtil.firstSuccess;
+import static xdean.reflect.getter.util.TaskUtil.firstSuccess;
 
 import java.lang.reflect.Method;
 import java.util.Optional;
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 import java.util.function.Function;
 
-import xdean.jex.util.task.tryto.Try;
+import xdean.reflect.getter.util.TaskUtil;
 
 /**
  * Get {@link Method} from an invocation. <br>
@@ -92,22 +91,15 @@ public interface MethodGetter<T> extends InvokeGetter<T, Method>, PropertyGetter
     @SuppressWarnings("unchecked")
     private static <T, V> Function<T, ?> setterToFunction(BiConsumer<T, V> setter) {
       return c -> {
-        Try.to(() -> setter.accept(c, null))
-            .recover(adapt(e -> setter.accept(c, (V) (Integer) 0)))
-            .recover(adapt(e -> setter.accept(c, (V) (Double) 0.0)))
-            .recover(adapt(e -> setter.accept(c, (V) (Boolean) false)))
-            .recover(adapt(e -> setter.accept(c, (V) (Float) 0.0f)))
-            .recover(adapt(e -> setter.accept(c, (V) (Long) 0l)))
-            .recover(adapt(e -> setter.accept(c, (V) (Character) '0')))
-            .recover(adapt(e -> setter.accept(c, (V) (Byte) (byte) 0)))
-            .recover(adapt(e -> setter.accept(c, (V) (Short) (short) 0)));
-        return null;
-      };
-    }
-
-    private static <T, S> Function<T, S> adapt(Consumer<T> o) {
-      return t -> {
-        o.accept(t);
+        TaskUtil.firstSuccess(() -> setter.accept(c, null),
+            () -> setter.accept(c, (V) (Integer) 0),
+            () -> setter.accept(c, (V) (Double) 0.0),
+            () -> setter.accept(c, (V) (Boolean) false),
+            () -> setter.accept(c, (V) (Float) 0.0f),
+            () -> setter.accept(c, (V) (Long) 0l),
+            () -> setter.accept(c, (V) (Character) '0'),
+            () -> setter.accept(c, (V) (Byte) (byte) 0),
+            () -> setter.accept(c, (V) (Short) (short) 0));
         return null;
       };
     }

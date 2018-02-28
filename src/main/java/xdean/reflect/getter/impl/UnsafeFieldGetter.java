@@ -1,7 +1,7 @@
 package xdean.reflect.getter.impl;
 
-import static xdean.jex.util.lang.ExceptionUtil.uncheck;
-import static xdean.jex.util.task.TaskUtil.firstNonNull;
+import static xdean.reflect.getter.util.ExceptionUtil.uncheck;
+import static xdean.reflect.getter.util.TaskUtil.firstNonNull;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
@@ -20,10 +20,10 @@ import com.google.common.collect.Multimap;
 import net.sf.cglib.proxy.Enhancer;
 import net.sf.cglib.proxy.NoOp;
 import sun.misc.Unsafe;
-import xdean.jex.util.lang.PrimitiveTypeUtil;
-import xdean.jex.util.lang.UnsafeUtil;
-import xdean.jex.util.reflect.ReflectUtil;
 import xdean.reflect.getter.FieldGetter;
+import xdean.reflect.getter.util.PrimitiveTypeUtil;
+import xdean.reflect.getter.util.ReflectUtil;
+import xdean.reflect.getter.util.UnsafeUtil;
 
 /**
  * Based on {@link Unsafe}.
