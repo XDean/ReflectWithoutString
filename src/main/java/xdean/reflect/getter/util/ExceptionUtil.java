@@ -1,10 +1,6 @@
 package xdean.reflect.getter.util;
 
 public class ExceptionUtil {
-  public static <T extends Throwable, R> R throwIt(T t) throws T {
-    throw t;
-  }
-
   @SuppressWarnings("unchecked")
   public static <T extends Throwable, R> R throwAsUncheck(Throwable t) throws T {
     throw (T) t;
@@ -23,15 +19,6 @@ public class ExceptionUtil {
       return task.call();
     } catch (Exception t) {
       return throwAsUncheck(t);
-    }
-  }
-
-  public static boolean uncatch(ActionE0<?> task) {
-    try {
-      task.call();
-      return true;
-    } catch (Exception t) {
-      return false;
     }
   }
 
