@@ -6,16 +6,14 @@ import static xdean.reflect.getter.internal.util.TaskUtil.firstNonNull;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
-
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Iterators;
-import com.google.common.collect.Multimap;
 
 import net.sf.cglib.proxy.Enhancer;
 import net.sf.cglib.proxy.NoOp;
@@ -37,7 +35,7 @@ public class UnsafeFieldGetter<T> implements FieldGetter<T> {
   private static final Unsafe UNSAFE = UnsafeUtil.getUnsafe();
 
   private T mockT;
-  private Multimap<Class<?>, Field> primitives = HashMultimap.create();
+  private Map<Class<?>, List<Field>> primitives = new HashMap<>();
   private Map<Object, Field> objectMap = new IdentityHashMap<>();
 
   /**
@@ -115,7 +113,7 @@ public class UnsafeFieldGetter<T> implements FieldGetter<T> {
 
   private void handlePrimitive(Field field) {
     field.setAccessible(true);
-    primitives.put(field.getType(), field);
+    primitives.computeIfAbsent(field.getType(), k -> new ArrayList<>()).add(field);
   }
 
   private Field getPrimitive(Function<T, ?> invoke) {
@@ -163,9 +161,9 @@ public class UnsafeFieldGetter<T> implements FieldGetter<T> {
     case "long":
       return (Iterator<E>) this.<Long> getIterator(0L, i -> i == Long.MAX_VALUE ? null : i + 1L);
     case "double":
-      return (Iterator<E>) Iterators.transform(getAllValue(Long.class), l -> Double.longBitsToDouble(l));
+      return (Iterator<E>) this.<Double> getIterator(0d, i -> i >= 100 ? null : i + 1d);
     case "float":
-      return (Iterator<E>) this.<Float> getIterator(0f, i -> i == Float.MAX_VALUE ? null : i + 1f);
+      return (Iterator<E>) this.<Float> getIterator(0f, i -> i >= 100 ? null : i + 1f);
     case "boolean":
       return (Iterator<E>) this.<Boolean> getIterator(Boolean.TRUE, i -> i ? Boolean.FALSE : null);
     case "char":
