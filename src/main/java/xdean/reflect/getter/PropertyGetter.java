@@ -2,8 +2,6 @@ package xdean.reflect.getter;
 
 import java.util.function.Function;
 
-import xdean.jex.internal.codecov.CodecovIgnore;
-
 /**
  * Get property information by invocation.
  *
@@ -29,7 +27,6 @@ import xdean.jex.internal.codecov.CodecovIgnore;
  *
  * @param <T>
  */
-@CodecovIgnore
 public interface PropertyGetter<T> {
 
   /**

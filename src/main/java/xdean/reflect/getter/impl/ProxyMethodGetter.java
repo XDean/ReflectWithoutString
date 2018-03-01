@@ -11,9 +11,9 @@ import net.sf.cglib.proxy.Callback;
 import net.sf.cglib.proxy.Enhancer;
 import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
-import xdean.jex.util.lang.UnsafeUtil;
-import xdean.jex.util.reflect.ReflectUtil;
 import xdean.reflect.getter.MethodGetter;
+import xdean.reflect.getter.internal.util.ReflectUtil;
+import xdean.reflect.getter.internal.util.UnsafeUtil;
 
 /**
  * Based on cglib.<br>
