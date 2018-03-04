@@ -36,7 +36,6 @@ public class TaskUtil {
    * IGNORE EXCEPTIONS.
    *
    * @param tasks
-   * @return can be null
    * @throws IllegalStateException If all tasks failed.
    */
   @SafeVarargs
