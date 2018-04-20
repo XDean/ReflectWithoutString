@@ -14,7 +14,7 @@ import java.util.function.Function;
 public interface FieldPropGetter<T> extends FieldGetter<T>, PropertyGetter<T> {
   @Override
   default <O> String getPropName(Function<T, O> getter) {
-    return Helper.getterToName(getField(getter::apply).getName());
+    return getField(getter::apply).getName();
   }
 
   @Override
@@ -24,11 +24,11 @@ public interface FieldPropGetter<T> extends FieldGetter<T>, PropertyGetter<T> {
 
   @Override
   default <O> String getPropName(BiConsumer<T, O> setter) {
-    return getPropName(Helper.setterToGetter(setter));
+    throw new UnsupportedOperationException();
   }
 
   @Override
   default <O> Class<?> getPropType(BiConsumer<T, O> setter) {
-    return getPropType(Helper.setterToGetter(setter));
+    throw new UnsupportedOperationException();
   }
 }

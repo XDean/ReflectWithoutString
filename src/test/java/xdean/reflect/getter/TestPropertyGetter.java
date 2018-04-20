@@ -39,16 +39,16 @@ public class TestPropertyGetter {
   @Test
   public void testFieldBooleanOverflow() {
     FieldPropGetter<ManyPrimitive> actual = (FieldPropGetter<ManyPrimitive>) fieldPg.get(ManyPrimitive.class);
-    assertEquals("b1", actual.getName(t -> t.b1));
-    assertEquals("b2", actual.getName(t -> t.b2));
-    assertEquals("b3", actual.getName(t -> t.b3));
-    assertEquals("c1", actual.getName(t -> t.c1));
-    assertEquals("d1", actual.getName(t -> t.d1));
-    assertEquals("f1", actual.getName(t -> t.f1));
-    assertEquals("i1", actual.getName(t -> t.i1));
-    assertEquals("s1", actual.getName(t -> t.s1));
-    assertEquals("l1", actual.getName(t -> t.l1));
-    assertEquals("bt1", actual.getName(t -> t.bt1));
+    assertEquals("b1", actual.getPropName(t -> t.b1));
+    assertEquals("b2", actual.getPropName(t -> t.b2));
+    assertEquals("b3", actual.getPropName(t -> t.b3));
+    assertEquals("c1", actual.getPropName(t -> t.c1));
+    assertEquals("d1", actual.getPropName(t -> t.d1));
+    assertEquals("f1", actual.getPropName(t -> t.f1));
+    assertEquals("i1", actual.getPropName(t -> t.i1));
+    assertEquals("s1", actual.getPropName(t -> t.s1));
+    assertEquals("l1", actual.getPropName(t -> t.l1));
+    assertEquals("bt1", actual.getPropName(t -> t.bt1));
   }
 
   @Test(expected = IllegalArgumentException.class)
@@ -77,15 +77,15 @@ public class TestPropertyGetter {
   @Test
   public void testSetter() {
     MethodPropGetter<Primitive> mg = new ProxyMethodGetter<>(Primitive.class);
-    assertEquals("b", mg.getName(Primitive::setB));
-    assertEquals("c", mg.getName(Primitive::setC));
-    assertEquals("d", mg.getName(Primitive::setD));
-    assertEquals("f", mg.getName(Primitive::setF));
-    assertEquals("i", mg.getName(Primitive::setI));
-    assertEquals("l", mg.getName(Primitive::setL));
-    assertEquals("o", mg.getName(Primitive::setO));
-    assertEquals("s", mg.getName(Primitive::setS));
-    assertEquals("bool", mg.getName(Primitive::setBool));
+    assertEquals("b", mg.getPropName(Primitive::setB));
+    assertEquals("c", mg.getPropName(Primitive::setC));
+    assertEquals("d", mg.getPropName(Primitive::setD));
+    assertEquals("f", mg.getPropName(Primitive::setF));
+    assertEquals("i", mg.getPropName(Primitive::setI));
+    assertEquals("l", mg.getPropName(Primitive::setL));
+    assertEquals("o", mg.getPropName(Primitive::setO));
+    assertEquals("s", mg.getPropName(Primitive::setS));
+    assertEquals("bool", mg.getPropName(Primitive::setBool));
   }
 
   /********************* Test ************************/
@@ -98,7 +98,7 @@ public class TestPropertyGetter {
   private void testInvokeTime(PngGetter pg, long times) {
     PropertyGetter<ForTime> png = pg.get(ForTime.class);
     for (int i = 0; i < times; i++) {
-      png.getName(ForTime::getO);
+      png.getPropName(ForTime::getO);
     }
   }
 
@@ -114,74 +114,74 @@ public class TestPropertyGetter {
 
   private void testAccessLevel(PngGetter pg) {
     PropertyGetter<AccessLevel> png = pg.get(AccessLevel.class);
-    assertEquals("pub", png.getName(a -> a.getPub()));
-    assertEquals("pro", png.getName(a -> a.getPro()));
-    assertEquals("fri", png.getName(a -> a.getFri()));
-    assertEquals("pri", png.getName(a -> a.getPri()));
+    assertEquals("pub", png.getPropName(a -> a.getPub()));
+    assertEquals("pro", png.getPropName(a -> a.getPro()));
+    assertEquals("fri", png.getPropName(a -> a.getFri()));
+    assertEquals("pri", png.getPropName(a -> a.getPri()));
   }
 
   private void testExtend(PngGetter pg) {
     PropertyGetter<Parent> ppng = pg.get(Parent.class);
-    assertEquals("parent", ppng.getName(a -> a.getParent()));
+    assertEquals("parent", ppng.getPropName(a -> a.getParent()));
 
     PropertyGetter<Son> spng = pg.get(Son.class);
-    assertEquals("parent", spng.getName(a -> a.getParent()));
-    assertEquals("son", spng.getName(a -> a.getSon()));
+    assertEquals("parent", spng.getPropName(a -> a.getParent()));
+    assertEquals("son", spng.getPropName(a -> a.getSon()));
   }
 
   private void testPrimitive(PngGetter pg) {
     PropertyGetter<Primitive> png = pg.get(Primitive.class);
-    assertEquals("b", png.getName(a -> a.getB()));
-    assertEquals("c", png.getName(a -> a.getC()));
-    assertEquals("bool", png.getName(a -> a.isBool()));
-    assertEquals("i", png.getName(a -> a.getI()));
-    assertEquals("s", png.getName(a -> a.getS()));
-    assertEquals("l", png.getName(a -> a.getL()));
-    assertEquals("f", png.getName(a -> a.getF()));
-    assertEquals("d", png.getName(a -> a.getD()));
+    assertEquals("b", png.getPropName(a -> a.getB()));
+    assertEquals("c", png.getPropName(a -> a.getC()));
+    assertEquals("bool", png.getPropName(a -> a.isBool()));
+    assertEquals("i", png.getPropName(a -> a.getI()));
+    assertEquals("s", png.getPropName(a -> a.getS()));
+    assertEquals("l", png.getPropName(a -> a.getL()));
+    assertEquals("f", png.getPropName(a -> a.getF()));
+    assertEquals("d", png.getPropName(a -> a.getD()));
 
-    assertEquals(byte.class, png.getType(a -> a.getB()));
-    assertEquals(char.class, png.getType(a -> a.getC()));
-    assertEquals(boolean.class, png.getType(a -> a.isBool()));
-    assertEquals(int.class, png.getType(a -> a.getI()));
-    assertEquals(short.class, png.getType(a -> a.getS()));
-    assertEquals(long.class, png.getType(a -> a.getL()));
-    assertEquals(float.class, png.getType(a -> a.getF()));
-    assertEquals(double.class, png.getType(a -> a.getD()));
+    assertEquals(byte.class, png.getPropType(a -> a.getB()));
+    assertEquals(char.class, png.getPropType(a -> a.getC()));
+    assertEquals(boolean.class, png.getPropType(a -> a.isBool()));
+    assertEquals(int.class, png.getPropType(a -> a.getI()));
+    assertEquals(short.class, png.getPropType(a -> a.getS()));
+    assertEquals(long.class, png.getPropType(a -> a.getL()));
+    assertEquals(float.class, png.getPropType(a -> a.getF()));
+    assertEquals(double.class, png.getPropType(a -> a.getD()));
   }
 
   private void testArray(PngGetter pg) {
     PropertyGetter<Array> png = pg.get(Array.class);
-    assertEquals("is", png.getName(a -> a.getIs()));
-    assertEquals("os", png.getName(a -> a.getOs()));
+    assertEquals("is", png.getPropName(a -> a.getIs()));
+    assertEquals("os", png.getPropName(a -> a.getOs()));
 
-    assertEquals(int[].class, png.getType(a -> a.getIs()));
-    assertEquals(Object[].class, png.getType(a -> a.getOs()));
+    assertEquals(int[].class, png.getPropType(a -> a.getIs()));
+    assertEquals(Object[].class, png.getPropType(a -> a.getOs()));
   }
 
   private void testClass(PngGetter pg) {
     PropertyGetter<Klass> png = pg.get(Klass.class);
-    assertEquals("klass", png.getName(a -> a.getKlass()));
-    assertEquals(Class.class, png.getType(a -> a.getKlass()));
+    assertEquals("klass", png.getPropName(a -> a.getKlass()));
+    assertEquals(Class.class, png.getPropType(a -> a.getKlass()));
   }
 
   private void testAbsClass(PngGetter pg) {
     PropertyGetter<AbsClass> png = pg.get(AbsClass.class);
-    assertEquals("o", png.getName(a -> a.getO()));
-    assertEquals("i", png.getName(a -> a.getI()));
+    assertEquals("o", png.getPropName(a -> a.getO()));
+    assertEquals("i", png.getPropName(a -> a.getI()));
 
-    assertEquals(Object.class, png.getType(a -> a.getO()));
-    assertEquals(int.class, png.getType(a -> a.getI()));
+    assertEquals(Object.class, png.getPropType(a -> a.getO()));
+    assertEquals(int.class, png.getPropType(a -> a.getI()));
 
   }
 
   private void testAbsField(PngGetter pg) {
     PropertyGetter<AbsField> png = pg.get(AbsField.class);
-    assertEquals("absList", png.getName(a -> a.getAbsList()));
-    assertEquals("clone", png.getName(a -> a.getClone()));
+    assertEquals("absList", png.getPropName(a -> a.getAbsList()));
+    assertEquals("clone", png.getPropName(a -> a.getClone()));
 
-    assertEquals(AbstractList.class, png.getType(a -> a.getAbsList()));
-    assertEquals(Cloneable.class, png.getType(a -> a.getClone()));
+    assertEquals(AbstractList.class, png.getPropType(a -> a.getAbsList()));
+    assertEquals(Cloneable.class, png.getPropType(a -> a.getClone()));
   }
 
   @Getter

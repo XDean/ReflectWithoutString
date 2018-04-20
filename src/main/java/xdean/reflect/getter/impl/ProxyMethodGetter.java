@@ -104,7 +104,7 @@ public class ProxyMethodGetter<T> implements MethodPropGetter<T> {
   @Override
   public Method getMethod(Consumer<T> invoke) {
     invoke.accept(getMockObject());
-    return getMethod(null);
+    return getMethod((Object)null);
   }
 
   /**

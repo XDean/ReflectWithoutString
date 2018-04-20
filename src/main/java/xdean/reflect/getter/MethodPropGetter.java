@@ -28,7 +28,7 @@ public interface MethodPropGetter<T> extends MethodGetter<T>, PropertyGetter<T> 
 
   @Override
   default <O> String getPropName(BiConsumer<T, O> setter) {
-    return getPropName(Helper.setterToGetter(setter));
+    return Helper.setterToName(getMethod(Helper.setterToGetter(setter)::apply).getName());
   }
 
   @Override
