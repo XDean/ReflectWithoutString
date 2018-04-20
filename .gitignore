@@ -12,6 +12,7 @@ bin/
 .apt_generated
 .springBeans
 rebel.xml
+/javadoc/
 
 ### IntelliJ IDEA ###
 .idea
