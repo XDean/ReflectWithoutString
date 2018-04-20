@@ -1,5 +1,6 @@
 package xdean.reflect.getter;
 
+import java.util.function.BiConsumer;
 import java.util.function.Function;
 
 /**
@@ -30,39 +31,51 @@ import java.util.function.Function;
 public interface PropertyGetter<T> {
 
   /**
-   * Get name of property related in the invocation.
-   *
-   * @param invoke
-   * @return
+   * Get name of property by invoke getter.
    */
-  String getName(Function<T, ?> invoke);
+  <O> String getName(Function<T, O> getter);
 
   /**
-   * Get type of property related in the invocation.
-   *
-   * @param invoke
-   * @return
+   * Get type of property by invoke getter.
    */
-  Class<?> getType(Function<T, ?> invoke);
+  <O> Class<?> getType(Function<T, O> getter);
+
+  /**
+   * Get name of property by invoke setter.
+   */
+  <O> String getName(BiConsumer<T, O> setter);
+
+  /**
+   * Get type of property by invoke setter.
+   */
+  <O> Class<?> getType(BiConsumer<T, O> setter);
 
   /**
    * More readable version of {@link #getName(Function)}.
-   *
-   * @param invoke
-   * @return
    */
-  default String nameOf(Function<T, ?> invoke) {
-    return getName(invoke);
+  default <O> String nameOf(Function<T, O> getter) {
+    return getName(getter);
   }
 
   /**
    * More readable version of {@link #getType(Function)}.
-   *
-   * @param invoke
-   * @return
    */
-  default Class<?> typeOf(Function<T, ?> invoke) {
-    return getType(invoke);
+  default <O> Class<?> typeOf(Function<T, O> getter) {
+    return getType(getter);
+  }
+
+  /**
+   * More readable version of {@link #getName(BiConsumer)}.
+   */
+  default <O> String nameOf(BiConsumer<T, O> setter) {
+    return getName(setter);
+  }
+
+  /**
+   * More readable version of {@link #getType(BiConsumer)}.
+   */
+  default <O> Class<?> typeOf(BiConsumer<T, O> setter) {
+    return getType(setter);
   }
 
   /**
