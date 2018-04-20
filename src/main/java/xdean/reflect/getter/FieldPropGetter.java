@@ -31,4 +31,9 @@ public interface FieldPropGetter<T> extends FieldGetter<T>, PropertyGetter<T> {
   default <O> Class<?> getPropType(BiConsumer<T, O> setter) {
     throw new UnsupportedOperationException();
   }
+
+  @Override
+  default boolean supportFieldInvoke() {
+    return true;
+  }
 }

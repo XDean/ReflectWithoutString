@@ -194,11 +194,6 @@ public class UnsafeFieldGetter<T> implements FieldPropGetter<T> {
   }
 
   @Override
-  public boolean supportFieldInvoke() {
-    return true;
-  }
-
-  @Override
   public <O> Field getField(Function<T, O> invoke) {
     return firstNonNull(
         () -> objectMap.get(invoke.apply(mockT)),
