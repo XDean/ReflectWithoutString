@@ -1,5 +1,6 @@
 package xdean.reflect.getter;
 
+import xdean.codecov.CodecovIgnore;
 import xdean.reflect.getter.impl.ProxyMethodGetter;
 import xdean.reflect.getter.impl.UnsafeFieldGetter;
 
@@ -9,6 +10,7 @@ import xdean.reflect.getter.impl.UnsafeFieldGetter;
  * @author Dean Xu (XDean@github.com)
  *
  */
+@CodecovIgnore
 public interface ReflectWithoutString {
   /**
    * Get a default {@link PropertyGetter}

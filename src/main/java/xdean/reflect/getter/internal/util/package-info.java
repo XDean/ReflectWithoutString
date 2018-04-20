@@ -3,4 +3,5 @@
  * 
  * @author Dean Xu (XDean@github.com)
  */
+@xdean.codecov.CodecovIgnore
 package xdean.reflect.getter.internal.util;
