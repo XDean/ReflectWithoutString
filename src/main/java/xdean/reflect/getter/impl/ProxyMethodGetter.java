@@ -11,7 +11,7 @@ import net.sf.cglib.proxy.Callback;
 import net.sf.cglib.proxy.Enhancer;
 import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
-import xdean.reflect.getter.MethodGetter;
+import xdean.reflect.getter.MethodPropGetter;
 import xdean.reflect.getter.internal.util.ReflectUtil;
 import xdean.reflect.getter.internal.util.UnsafeUtil;
 
@@ -24,7 +24,7 @@ import xdean.reflect.getter.internal.util.UnsafeUtil;
  *
  * @param <T>
  */
-public class ProxyMethodGetter<T> implements MethodGetter<T> {
+public class ProxyMethodGetter<T> implements MethodPropGetter<T> {
   private static final String BIND_CALLBACK;
   static {
     try {

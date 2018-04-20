@@ -51,34 +51,6 @@ public interface PropertyGetter<T> {
   <O> Class<?> getPropType(BiConsumer<T, O> setter);
 
   /**
-   * More readable version of {@link #getName(Function)}.
-   */
-  default <O> String nameOf(Function<T, O> getter) {
-    return getPropName(getter);
-  }
-
-  /**
-   * More readable version of {@link #getType(Function)}.
-   */
-  default <O> Class<?> typeOf(Function<T, O> getter) {
-    return getPropType(getter);
-  }
-
-  /**
-   * More readable version of {@link #getName(BiConsumer)}.
-   */
-  default <O> String nameOf(BiConsumer<T, O> setter) {
-    return getPropName(setter);
-  }
-
-  /**
-   * More readable version of {@link #getType(BiConsumer)}.
-   */
-  default <O> Class<?> typeOf(BiConsumer<T, O> setter) {
-    return getPropType(setter);
-  }
-
-  /**
    * Whether the direct field invoke is supported. If return true, you can use:
    *
    * <pre>

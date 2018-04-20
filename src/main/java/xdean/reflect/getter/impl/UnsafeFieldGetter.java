@@ -18,7 +18,7 @@ import java.util.function.Function;
 import net.sf.cglib.proxy.Enhancer;
 import net.sf.cglib.proxy.NoOp;
 import sun.misc.Unsafe;
-import xdean.reflect.getter.FieldGetter;
+import xdean.reflect.getter.FieldPropGetter;
 import xdean.reflect.getter.internal.util.PrimitiveTypeUtil;
 import xdean.reflect.getter.internal.util.ReflectUtil;
 import xdean.reflect.getter.internal.util.UnsafeUtil;
@@ -30,7 +30,7 @@ import xdean.reflect.getter.internal.util.UnsafeUtil;
  *
  * @param <T>
  */
-public class UnsafeFieldGetter<T> implements FieldGetter<T> {
+public class UnsafeFieldGetter<T> implements FieldPropGetter<T> {
 
   private static final Unsafe UNSAFE = UnsafeUtil.getUnsafe();
 

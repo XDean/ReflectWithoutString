@@ -38,7 +38,7 @@ public class TestPropertyGetter {
 
   @Test
   public void testFieldBooleanOverflow() {
-    FieldGetter<ManyPrimitive> actual = (FieldGetter<ManyPrimitive>) fieldPg.get(ManyPrimitive.class);
+    FieldPropGetter<ManyPrimitive> actual = (FieldPropGetter<ManyPrimitive>) fieldPg.get(ManyPrimitive.class);
     assertEquals("b1", actual.getName(t -> t.b1));
     assertEquals("b2", actual.getName(t -> t.b2));
     assertEquals("b3", actual.getName(t -> t.b3));
@@ -76,7 +76,7 @@ public class TestPropertyGetter {
 
   @Test
   public void testSetter() {
-    MethodGetter<Primitive> mg = new ProxyMethodGetter<>(Primitive.class);
+    MethodPropGetter<Primitive> mg = new ProxyMethodGetter<>(Primitive.class);
     assertEquals("b", mg.getName(Primitive::setB));
     assertEquals("c", mg.getName(Primitive::setC));
     assertEquals("d", mg.getName(Primitive::setD));
