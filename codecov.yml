@@ -30,6 +30,7 @@ ignore:
   - "src/main/java/xdean/reflect/getter/internal/util/ActionE0.java"
   - "src/main/java/xdean/reflect/getter/internal/util/ExceptionUtil.java"
   - "src/main/java/xdean/reflect/getter/internal/util/FuncE0.java"
+  - "src/main/java/xdean/reflect/getter/internal/util/GetterSetterUtil.java"
   - "src/main/java/xdean/reflect/getter/internal/util/PrimitiveTypeUtil.java"
   - "src/main/java/xdean/reflect/getter/internal/util/ReflectUtil.java"
   - "src/main/java/xdean/reflect/getter/internal/util/TaskUtil.java"

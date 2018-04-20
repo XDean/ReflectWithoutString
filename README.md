@@ -11,34 +11,21 @@
 
 ### Get Field
 ```java
-	FieldGetter fg = new UnsafeFieldGetter(SomeClass.class);
-	Field field = fg.get(o -> o.getSomeField());// or s.someField
+	FieldGetter fg = ReflectWithoutString.fieldGetter(SomeClass.class);
+	Field field = fg.getField(o -> o.getSomeField());// or s.someField
 ```
 	
 ### Get Method
 ```java
-	MethodGetter mg = new ProxyMethodGetter(SomeClass.class);
-	Method method = mg.get(o -> o.someMethod());
+	MethodGetter mg = ReflectWithoutString.methodGetter(SomeClass.class);
+	Method method = mg.getMethod(o -> o.someMethod());
 ```
 
-### Get Property name or type
+### Get Property name and type
 ```java
-	FieldGetter fg = new UnsafeFieldGetter(SomeClass.class);
-	String name = fg.nameOf(o -> o.someField);// name = "someField"
-	Class<?> type = fg.typeOf(o -> o.someField);// type = someField's type
-
-	MethodGetter mg = new ProxyMethodGetter(SomeClass.class);
-	String name = mg.nameOf(o -> o.getSomeField());// name = "someField"
-	Class<?> type = mg.typeOf(o -> o.getSomeField());// type = someField's type
-```
-
-### Clearer Usage, use object value directly instead of lambda
-```java
-	FieldGetter fg = new UnsafeFieldGetter(SomeClass.class);
-	SomeClass sc = fg.getMockObject();
-	String fieldA = fg.nameOf(sc.fieldA);
-	String fieldB = fg.nameOf(sc.fieldB);
-	String fieldC = fg.nameOf(sc.fieldC);
+	PropertyGetter pg = ReflectWithoutString.propertyGetter(SomeClass.class);
+	String name = pg.getPropName(o -> o.getSomeField());// name = "someField"
+	Class<?> type = pg.getPropType(o -> o.getSomeField());// type = someField's type
 ```
 
 ## Current two implementations compare
@@ -48,7 +35,3 @@ Class | Base on | Construct cost | Support field invoke | Limit
 `ProxyMethodGetter` | [cglib](link1) | 1s for 1K construct | No | Final class and method
 
 <sup>*Also see their javadoc*</sup>
-
-## TODO
-1. Unload cglib created classes
-2. Make cache
