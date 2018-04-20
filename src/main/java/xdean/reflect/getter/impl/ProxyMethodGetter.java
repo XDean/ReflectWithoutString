@@ -4,7 +4,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Optional;
-import java.util.function.Function;
+import java.util.function.Consumer;
 
 import net.sf.cglib.core.Signature;
 import net.sf.cglib.proxy.Callback;
@@ -102,8 +102,9 @@ public class ProxyMethodGetter<T> implements MethodPropGetter<T> {
   }
 
   @Override
-  public Method get(Function<T, ?> invoke) {
-    return get(invoke.apply(getMockObject()));
+  public Method getMethod(Consumer<T> invoke) {
+    invoke.accept(getMockObject());
+    return getMethod(null);
   }
 
   /**
@@ -113,51 +114,7 @@ public class ProxyMethodGetter<T> implements MethodPropGetter<T> {
    * @return the method
    * @see #getMockObject()
    */
-  public Method get(Object invoke) {
+  public Method getMethod(Object invoke) {
     return getMethod().orElseThrow(() -> new IllegalArgumentException("No method invoked."));
-  }
-
-  /**
-   * Get Method name by an invocation result
-   *
-   * @param o an invocation result of the mock object
-   * @return the method name
-   * @see #getMockObject()
-   */
-  public String getName(Object o) {
-    return get(o).getName();
-  }
-
-  /**
-   * Get Method type by an invocation result
-   *
-   * @param o an invocation result of the mock object
-   * @return the method return type
-   * @see #getMockObject()
-   */
-  public Class<?> getType(Object o) {
-    return get(o).getReturnType();
-  }
-
-  /**
-   * More readable version of {@link #getName(Object)}
-   *
-   * @param o an invocation result of the mock object
-   * @see #getMockObject()
-   * @return the method name
-   */
-  public String nameOf(Object o) {
-    return getName(o);
-  }
-
-  /**
-   * More readable version of {@link #getType(Object)}
-   *
-   * @param o an invocation result of the mock object
-   * @see #getMockObject()
-   * @return the method return type
-   */
-  public Class<?> typeOf(Object o) {
-    return getType(o);
   }
 }

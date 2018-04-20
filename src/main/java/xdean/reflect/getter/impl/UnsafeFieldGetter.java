@@ -199,7 +199,7 @@ public class UnsafeFieldGetter<T> implements FieldPropGetter<T> {
   }
 
   @Override
-  public Field get(Function<T, ?> invoke) {
+  public <O> Field getField(Function<T, O> invoke) {
     return firstNonNull(
         () -> objectMap.get(invoke.apply(mockT)),
         () -> getPrimitive(invoke))
