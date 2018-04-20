@@ -24,12 +24,12 @@ public interface FieldPropGetter<T> extends FieldGetter<T>, PropertyGetter<T> {
 
   @Override
   default <O> String getPropName(BiConsumer<T, O> setter) {
-    throw new UnsupportedOperationException();
+    throw new UnsupportedOperationException("Not supported now, how about use getter instead.");
   }
 
   @Override
   default <O> Class<?> getPropType(BiConsumer<T, O> setter) {
-    throw new UnsupportedOperationException();
+    throw new UnsupportedOperationException("Not supported now, how about use getter instead.");
   }
 
   @Override

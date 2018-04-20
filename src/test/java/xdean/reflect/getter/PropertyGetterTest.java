@@ -10,13 +10,10 @@ import org.junit.Test;
 
 import lombok.Getter;
 import lombok.Setter;
-import xdean.reflect.getter.impl.ProxyMethodGetter;
-import xdean.reflect.getter.impl.UnsafeFieldGetter;
 
-public class TestPropertyGetter {
-  PngGetter fieldPg = UnsafeFieldGetter::new;
-
-  PngGetter methodPg = ProxyMethodGetter::new;
+public class PropertyGetterTest {
+  PngGetter fieldPg = ReflectWithoutString::fieldGetter;
+  PngGetter methodPg = ReflectWithoutString::methodGetter;
 
   /********************** Field *********************/
   @Test
@@ -76,7 +73,7 @@ public class TestPropertyGetter {
 
   @Test
   public void testSetter() {
-    MethodPropGetter<Primitive> mg = new ProxyMethodGetter<>(Primitive.class);
+    PropertyGetter<Primitive> mg = methodPg.get(Primitive.class);
     assertEquals("b", mg.getPropName(Primitive::setB));
     assertEquals("c", mg.getPropName(Primitive::setC));
     assertEquals("d", mg.getPropName(Primitive::setD));
