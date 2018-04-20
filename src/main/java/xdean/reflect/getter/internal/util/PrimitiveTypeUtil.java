@@ -3,7 +3,7 @@ package xdean.reflect.getter.internal.util;
 import java.util.HashMap;
 import java.util.Map;
 
-public class PrimitiveTypeUtil {
+public abstract class PrimitiveTypeUtil {
 
   private static final Map<Class<?>, Class<?>> wrapperToPrimitive = new HashMap<>();
   static {

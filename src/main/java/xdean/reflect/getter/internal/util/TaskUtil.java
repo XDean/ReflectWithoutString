@@ -10,26 +10,7 @@ import java.util.Optional;
  * @author XDean
  *
  */
-public class TaskUtil {
-  /**
-   * Return the first result of these tasks<br>
-   * IGNORE EXCEPTIONS.
-   *
-   * @param tasks
-   * @return can be null
-   * @throws IllegalStateException If all tasks failed.
-   */
-  @SafeVarargs
-  public static <T> T firstSuccess(FuncE0<T, ?>... tasks) throws IllegalStateException {
-    for (FuncE0<T, ?> task : tasks) {
-      try {
-        return task.call();
-      } catch (Exception e) {
-        // ignore
-      }
-    }
-    throw new IllegalStateException("All tasks failed");
-  }
+public interface TaskUtil {
 
   /**
    * Return the first result of these tasks<br>

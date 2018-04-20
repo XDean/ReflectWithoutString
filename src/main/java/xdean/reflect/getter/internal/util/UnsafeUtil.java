@@ -7,7 +7,7 @@ import java.security.PrivilegedExceptionAction;
 
 import sun.misc.Unsafe;
 
-public class UnsafeUtil {
+public abstract class UnsafeUtil {
 
   private static final Unsafe THE_UNSAFE = initUnsafe();
 

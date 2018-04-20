@@ -1,6 +1,6 @@
 package xdean.reflect.getter.internal.util;
 
-public class ExceptionUtil {
+public interface ExceptionUtil {
   @SuppressWarnings("unchecked")
   public static <T extends Throwable, R> R throwAsUncheck(Throwable t) throws T {
     throw (T) t;

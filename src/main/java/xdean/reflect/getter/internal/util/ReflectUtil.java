@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class ReflectUtil {
+public interface ReflectUtil {
 
   /**
    * Get field value by name
