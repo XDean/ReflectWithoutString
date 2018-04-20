@@ -5,7 +5,7 @@ import java.util.function.Function;
 
 /**
  * Get property information by invocation.
- *
+ * 
  * <pre>
  * <code>
  * class Bean {
@@ -17,16 +17,14 @@ import java.util.function.Function;
  * }
  *
  * PropertyGetter&#60;Bean&#62; pg = ...;
- * //name="beanProp"
- * String name = pg.getName(b -&#62; b.getBeanProp());
+ * //name = "beanProp"
+ * String name = pg.getPropName(Bean::getBeanProp);
  * //clz = TheType.class, even if beanProp's actual type is subclass of TheType
- * Class&#60;?&#62; clz =  pg.getType(b -&#62; b.getBeanProp());
+ * Class&#60;?&#62; type =  pg.getPropType(Bean::getBeanProp);
  * </code>
  * </pre>
- *
- * @author XDean
- *
- * @param <T>
+ * 
+ * @author Dean Xu (XDean@github.com)
  */
 public interface PropertyGetter<T> {
 

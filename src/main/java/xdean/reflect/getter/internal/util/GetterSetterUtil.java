@@ -1,11 +1,9 @@
-package xdean.reflect.getter;
+package xdean.reflect.getter.internal.util;
 
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
-import xdean.reflect.getter.internal.util.TaskUtil;
-
-interface Helper {
+public interface GetterSetterUtil {
   int UP_LOW_GAP = 'a' - 'A';
 
   /**

@@ -20,9 +20,7 @@ import xdean.reflect.getter.internal.util.UnsafeUtil;
  * Don't support FINAL class and method.<br>
  * More expensive than UnsafeFieldGetter to construct.(Because need generate byte code.)
  *
- * @author XDean
- *
- * @param <T>
+ * @author Dean Xu (XDean@github.com)
  */
 public class ProxyMethodGetter<T> implements MethodPropGetter<T> {
   private static final String BIND_CALLBACK;
@@ -104,7 +102,7 @@ public class ProxyMethodGetter<T> implements MethodPropGetter<T> {
   @Override
   public Method getMethod(Consumer<T> invoke) {
     invoke.accept(getMockObject());
-    return getMethod((Object)null);
+    return getMethod((Object) null);
   }
 
   /**

@@ -24,11 +24,9 @@ import xdean.reflect.getter.internal.util.ReflectUtil;
 import xdean.reflect.getter.internal.util.UnsafeUtil;
 
 /**
- * Based on {@link Unsafe}.
+ * Implementation of {@link FieldPropGetter}. Based on {@link Unsafe}.
  *
- * @author XDean
- *
- * @param <T>
+ * @author Dean Xu (XDean@github.com)
  */
 public class UnsafeFieldGetter<T> implements FieldPropGetter<T> {
 
