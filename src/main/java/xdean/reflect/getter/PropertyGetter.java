@@ -33,49 +33,49 @@ public interface PropertyGetter<T> {
   /**
    * Get name of property by invoke getter.
    */
-  <O> String getName(Function<T, O> getter);
+  <O> String getPropName(Function<T, O> getter);
 
   /**
    * Get type of property by invoke getter.
    */
-  <O> Class<?> getType(Function<T, O> getter);
+  <O> Class<?> getPropType(Function<T, O> getter);
 
   /**
    * Get name of property by invoke setter.
    */
-  <O> String getName(BiConsumer<T, O> setter);
+  <O> String getPropName(BiConsumer<T, O> setter);
 
   /**
    * Get type of property by invoke setter.
    */
-  <O> Class<?> getType(BiConsumer<T, O> setter);
+  <O> Class<?> getPropType(BiConsumer<T, O> setter);
 
   /**
    * More readable version of {@link #getName(Function)}.
    */
   default <O> String nameOf(Function<T, O> getter) {
-    return getName(getter);
+    return getPropName(getter);
   }
 
   /**
    * More readable version of {@link #getType(Function)}.
    */
   default <O> Class<?> typeOf(Function<T, O> getter) {
-    return getType(getter);
+    return getPropType(getter);
   }
 
   /**
    * More readable version of {@link #getName(BiConsumer)}.
    */
   default <O> String nameOf(BiConsumer<T, O> setter) {
-    return getName(setter);
+    return getPropName(setter);
   }
 
   /**
    * More readable version of {@link #getType(BiConsumer)}.
    */
   default <O> Class<?> typeOf(BiConsumer<T, O> setter) {
-    return getType(setter);
+    return getPropType(setter);
   }
 
   /**
