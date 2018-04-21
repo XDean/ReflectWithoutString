@@ -1,16 +1,17 @@
 package xdean.reflect.getter;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
 import lombok.Getter;
 import lombok.Setter;
+import xdean.reflect.getter.impl.ProxyMethodGetter;
 
 public class MethodGetterTest {
   @Test
   public void test() throws Exception {
-    MethodPropGetter<A> mg = ReflectWithoutString.methodGetter(A.class);
+    ProxyMethodGetter<A> mg = (ProxyMethodGetter<A>) ReflectWithoutString.methodGetter(A.class);
     assertEquals("getA", mg.getMethodName(a -> a.getA()));
     assertEquals("getB", mg.getMethodName(a -> a.getB()));
     assertEquals("getC", mg.getMethodName(a -> a.getC()));
@@ -32,6 +33,7 @@ public class MethodGetterTest {
     Object[] c;
 
     void init() {
+      throw new InstantiationError();
     }
 
     abstract A func(A a);

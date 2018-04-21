@@ -4,7 +4,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Optional;
-import java.util.function.Consumer;
 
 import net.sf.cglib.core.Signature;
 import net.sf.cglib.proxy.Callback;
@@ -12,13 +11,16 @@ import net.sf.cglib.proxy.Enhancer;
 import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
 import xdean.reflect.getter.MethodPropGetter;
+import xdean.reflect.getter.internal.util.ActionE1;
+import xdean.reflect.getter.internal.util.ExceptionUtil;
 import xdean.reflect.getter.internal.util.ReflectUtil;
 import xdean.reflect.getter.internal.util.UnsafeUtil;
 
 /**
  * Based on cglib.<br>
  * Don't support FINAL class and method.<br>
- * More expensive than UnsafeFieldGetter to construct.(Because need generate byte code.)
+ * More expensive than UnsafeFieldGetter to construct.(Because need generate
+ * byte code.)
  *
  * @author Dean Xu (XDean@github.com)
  */
@@ -100,8 +102,8 @@ public class ProxyMethodGetter<T> implements MethodPropGetter<T> {
   }
 
   @Override
-  public Method getMethod(Consumer<T> invoke) {
-    invoke.accept(getMockObject());
+  public Method getMethod(ActionE1<T, ?> invoke) {
+    ExceptionUtil.uncheck(() -> invoke.call(getMockObject()));
     return getMethod((Object) null);
   }
 
