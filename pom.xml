@@ -7,7 +7,7 @@
     <version>1.0</version>
   </parent>
   <artifactId>ReflectWithoutString</artifactId>
-  <version>2.0</version>
+  <version>2.0.1</version>
   <name>ReflectWithoutString</name>
   <description>Reflect without String</description>
   <url>https://github.com/XDean/ReflectWithoutString</url>
