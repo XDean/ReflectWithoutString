@@ -28,6 +28,7 @@ comment:
 ignore:
 #generated
   - "src/main/java/xdean/reflect/getter/internal/util/ActionE0.java"
+  - "src/main/java/xdean/reflect/getter/internal/util/ActionE1.java"
   - "src/main/java/xdean/reflect/getter/internal/util/ExceptionUtil.java"
   - "src/main/java/xdean/reflect/getter/internal/util/FuncE0.java"
   - "src/main/java/xdean/reflect/getter/internal/util/GetterSetterUtil.java"

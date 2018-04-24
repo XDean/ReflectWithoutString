@@ -30,3 +30,4 @@ nbdist/
 
 ### other ###
 .svn/
+/.README.md.html

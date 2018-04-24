@@ -7,6 +7,26 @@
 - Get the reflect object from invocation.
 - A type-safe solution of reflection.
 
+## Get Start
+
+```xml
+<dependency>
+  <groupId>com.github.XDean</groupId>
+  <artifactId>ReflectWithoutString</artifactId>
+  <version>2.0.1</version>
+</dependency>
+```
+
+If you need use `MethodGetter`, add following dependency also
+
+```xml
+<dependency>
+  <groupId>cglib</groupId>
+  <artifactId>cglib</artifactId>
+  <version>3.2.4</version>
+</dependency>
+```
+
 ## Usage
 
 ### Get Field
